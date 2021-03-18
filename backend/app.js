@@ -14,7 +14,7 @@ db.sequelize.sync({ force: true }).then(() => {
     console.log("Drop and re-sync db.");
   }); */
 
-app.use('/api/user', userRoutes);
+app.use('/api/auth', userRoutes);
 
 
 module.exports = app;

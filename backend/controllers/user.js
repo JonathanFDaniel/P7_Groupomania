@@ -1,37 +1,63 @@
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 const db = require("../models");
 const users = db.users
 
-exports.createUser = (req, res) => {
-  
+exports.signup = (req, res) => {
+
     const user = {
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         email: req.body.email,
-        password: req.body.password,
+        password: bcrypt.hashSync(req.body.password, 10),
     };
   
     users.create(user)
-      .then(data => {
-        res.send(data);
+      .then(data => {res.send(data);
       })
-      .catch(err => {
-        res.status(500).send({
-          message: "email invalid"
+      .catch(error => {res.status(500).send({message: "requet invalid"});
+      });
+};
+
+exports.signin = (req, res) => {
+
+  users.findOne({ where: {email: req.body.email}})
+  
+    .then(user => {
+      if (!user) {
+        return res.status(404).send({ message: "User Not found." });
+      }
+
+      const passwordIsValid = bcrypt.compareSync( req.body.password, user.password );
+
+      if (!passwordIsValid) {
+        return res.status(401).send({
+          accessToken: null,
+          message: "Invalid Password!"
         });
+      }
+      res.status(200).json({
+        userId: user._id,
+        token: jwt.sign(
+          { userId: user._id },
+          'RAMDOM_TOKEN_SECRET',
+          { expiresIn: '24h'}
+        )
+      });
+
+    })
+    .catch(err => {
+      res.status(500).send({ message: err.message });
     });
 };
 
 exports.getUser = (req, res) => {
   
     users.findAll()
-      .then(data => {
-        res.send(data);
+      .then(data => {res.send(data);
       })
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "get error."
-        });
+      .catch(err => {res.status(500).send({message:err.message || "get error."});
       });
   };
 

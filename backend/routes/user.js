@@ -3,7 +3,9 @@ const router = express.Router();
 
 const userController = require('../controllers/user')
 
-router.post('/', userController.createUser); 
+router.post('/signup', userController.signup); 
+router.post('/signin', userController.signin); 
+
 router.get('/', userController.getUser);
 router.get('/:id', userController.getUserById);
 router.put('/:id', userController.modifyUser);
