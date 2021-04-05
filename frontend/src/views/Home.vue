@@ -1,7 +1,29 @@
 <template>
     <div class="home">
       <NavBar />
-      <HelloWorld msg="Welcome to Your Vue.js App"/>
+      <NewMessage />
+
+      <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Titre de la carte</h5>
+            <p class="card-text">Contenu textuel de la carte</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Titre de la carte</h5>
+            <p class="card-text">Contenu textuel de la carte</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Titre de la carte</h5>
+            <p class="card-text">Contenu textuel de la carte</p>
+        </div>
+      </div>
+
       <Footer />
     </div>
 </template>
@@ -10,14 +32,14 @@
 // @ is an alias to /src
 
 import NavBar from '@/components/NavBar.vue'
-import HelloWorld from '@/components/HelloWorld.vue'
+import NewMessage from '@/components/NewMessage.vue'
 import Footer from '@/components/Footer.vue'
 
 export default {
   name: 'Home',
   components: {
     NavBar,
-    HelloWorld,
+    NewMessage,
     Footer
   }
 }

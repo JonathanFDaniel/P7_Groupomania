@@ -1,13 +1,13 @@
 module.exports = (sequelize, Sequelize) => {
     const Message = sequelize.define("messages", {
-        idUSERS: {
+/*         idUSERS: {
             type: Sequelize.STRING,
             allowNull: false,
             references: {
                 model: 'Users',
                 key:'id'
             }
-        }, 
+        }, */ 
         title: {
             type: Sequelize.STRING,
             allowNull: false
