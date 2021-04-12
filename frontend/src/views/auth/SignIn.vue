@@ -8,18 +8,18 @@
         <form>  
 
             <div class="form-group mt-3">
-                <label for="emailSignIn">Email</label>
-                <input type="email" class="form-control" id="emailSignIn" placeholder="Entrez votre email">
+                <label for="email">Email</label>
+                <input v-model="user.email" type="email" class="form-control" id="email" placeholder="Entrez votre email" required>
             </div>
 
             <div class="form-group mt-3">
-                <label for="passwordSignIn">Mot de Passe</label>
-                <input type="password" class="form-control" id="passwordSignIn" placeholder="Entrez votre mot de passe">
+                <label for="password">Mot de Passe</label>
+                <input v-model="user.password" type="password" class="form-control" id="password" placeholder="Entrez votre mot de passe" required>
             </div>
 
-            <div class="d-flex justify-content-start mt-3">
-                <!-- <router-link class="nav-link" to="/"> --><button v-on:click="valideUser" type="submit" class="btn btn-primary">Valider</button><!-- </router-link> -->
-                <router-link class="nav-link" to="/signup"><button type="submit" class="btn btn-success">Créer un compte</button></router-link>
+            <div class="d-flex flex-wrap align-items-start mt-3">
+                <button v-on:click="valideUser" type="submit" class="btn btn-primary">Valider</button>
+                <router-link v-bind:to="'/signup'" class="p-1">Créer un compte</router-link>
             </div>
 
         </form>
@@ -29,6 +29,8 @@
 
 <script>
 
+//import AuthService from '../services/auth.service';
+
 import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/api/auth/'; 
@@ -37,8 +39,10 @@ export default {
   name: 'Signin',
   data() {
     return {
-        email: '',
-        password: ''
+        user: {
+            email: '',
+            password: ''
+        }
     }
   },
   components: {
@@ -47,12 +51,13 @@ export default {
   methods: {
     valideUser() {
         axios.post(API_URL + 'signin', {
-            email: this.email,
-            password: this.password
+            email: this.user.email,
+            password: this.user.password
         })  
         .then(response => {
             if (response.data.token) {
                 localStorage.setItem('user', JSON.stringify(response.data));
+                this.$router.push('/');
             }
         })  
         .catch(error => {

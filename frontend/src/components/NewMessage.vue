@@ -6,11 +6,11 @@
         <form class="row py-3">  
 
             <div class="col-sm-2 form-group mt-2">
-                <input v-model="title" type="string" class="form-control" id="messageTitle" placeholder="titre">
+                <input v-model="message.title" type="string" class="form-control" id="messageTitle" placeholder="titre" required>
             </div>
 
             <div class="col-sm-8 form-group mt-2">
-                <input v-model="content" type="text" class="form-control" id="messageContent" placeholder="contenu du message">
+                <input v-model="message.content" type="text" class="form-control" id="messageContent" placeholder="contenu du message" required>
             </div>
 
             <div class="col-sm-2 d-flex justify-content-start mt-2">
@@ -18,8 +18,6 @@
             </div>
 
         </form>
-
-        <button type="submit" v-on:click="showMessage()" class="btn btn-danger mb-5">Valider</button> 
 
         <div class="mb-5">
             <ul class="list-group d-flex flex-column-reverse">
@@ -30,7 +28,7 @@
                     <p>{{ post.content }}</p>
 
                   
-                    <input v-on:keyup.enter="addComment()" type="string" class="form-control" id="comment" placeholder="Ecrivez un commentaire">
+                    <input v-on:keyup.enter="addComment" type="text" class="form-control" placeholder="Ecrivez un commentaire">
   
 
                 </li>
@@ -51,8 +49,10 @@ export default {
   name: 'NewMessage',
     data() {
     return {
-        title: '',
-        content: '',
+        message: {
+            title: '',
+            content: '',
+        },
         comment: '', 
         posts: []
     }
@@ -62,24 +62,34 @@ export default {
 
     createMessage() {
         axios.post(API_URL + 'message', {
-            title: this.title,
-            content: this.content,
+            title: this.message.title,
+            content: this.message.content,
         })  
         .then(response => {
         console.log(response);
         })
         .catch(error => {
             console.log(error);
-        })
+        }),
+        axios.get(API_URL + 'message')
+        .then(response => this.posts = response.data)
+        .catch(error => { console.log(error); 
+        }),
+        this.title = ""
     },
 
     showMessage() {
         axios.get(API_URL + 'message')
-        .then(response => this.posts = response.data)
-        .catch(error => { console.log(error); })
+        .then(response => {
+            this.posts = response.data;
+            console.log(response.data);
+        })    
+        .catch(error => { console.log(error); 
+        })
     },
 
     addComment() {
+        //this.comment = document.getElementById('newComment').value
         console.log(this.comment);
 /*         axios.post(API_URL + 'message', {
             comment: this.comment
@@ -99,5 +109,8 @@ export default {
             .catch(error => { console.log(error); })
         }
     }, */
+    mounted() {
+        this.showMessage();
+    }
 }
 </script>
