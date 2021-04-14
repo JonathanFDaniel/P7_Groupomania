@@ -2,20 +2,28 @@
 
   <div class="bg-dark">
     <div class="container">
+     
       <nav class="navbar navbar-expand-lg navbar-dark">
 
-        <h1 class="navbar-brand">
-          <img src="assets/icon-left-font-monochrome-white.png" width="80" height="30" alt="Groupomania logo">
+        <h1 class="navbar-brand p-0 my-0">
+          <img src="../assets/icon-left-font-monochrome-white.png" width="160" height="auto" alt="Groupomania logo">
         </h1>
+        <div class="d-flex flex-column">
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+            <button class="navbar-toggler" type="button" @click="navListe = !navListe" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon py-auto"></span>
+            </button>
+
+          <div v-if="navListe" class="navbar-nav p-2 py-auto">
+            <router-link class="nav-link" to="/">Accueil</router-link>
+            <router-link class="nav-link" to="/user">Profil</router-link>
+          </div>
+        </div>
 
         <div id="navbarContent" class="collapse navbar-collapse justify-content-between">
           <div class="d-flex"> 
             <ul class="navbar-nav">
-              <li class="nav-item active">
+              <li class="nav-item">
                   <router-link class="nav-link" to="/">Accueil</router-link>
               </li>
               <li class="nav-item">
@@ -28,7 +36,7 @@
           </div>
         </div>
 
-      </nav>
+      </nav> 
     </div>
   </div>  
 
@@ -37,5 +45,11 @@
 <script>
 export default {
   name: 'NavBar',
-}
+  data() {
+    return {
+      navListe: false
+    }
+  }
+}    
+
 </script>

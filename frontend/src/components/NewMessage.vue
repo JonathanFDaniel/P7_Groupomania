@@ -3,7 +3,7 @@
 
         <h2>Publier un nouveau message</h2>
 
-        <form class="row py-3">  
+        <form name="form" @submit.prevent="createMessage" class="row py-3">  
 
             <div class="col-sm-2 form-group mt-2">
                 <input v-model="message.title" type="string" class="form-control" id="messageTitle" placeholder="titre" required>
@@ -14,7 +14,7 @@
             </div>
 
             <div class="col-sm-2 d-flex justify-content-start mt-2">
-                <button type="submit" v-on:click="createMessage" class="btn btn-primary">Valider</button>
+                <button type="submit" class="btn btn-primary">Valider</button>
             </div>
 
         </form>
@@ -27,9 +27,7 @@
 
                     <p>{{ post.content }}</p>
 
-                  
-                    <input v-on:keyup.enter="addComment" type="text" class="form-control" placeholder="Ecrivez un commentaire">
-  
+                    <input v-model="comment" v-on:keyup.enter="addComment" type="text" class="form-control" placeholder="Ecrivez un commentaire">
 
                 </li>
             </ul> 
@@ -60,24 +58,6 @@ export default {
 
   methods: {
 
-    createMessage() {
-        axios.post(API_URL + 'message', {
-            title: this.message.title,
-            content: this.message.content,
-        })  
-        .then(response => {
-        console.log(response);
-        })
-        .catch(error => {
-            console.log(error);
-        }),
-        axios.get(API_URL + 'message')
-        .then(response => this.posts = response.data)
-        .catch(error => { console.log(error); 
-        }),
-        this.title = ""
-    },
-
     showMessage() {
         axios.get(API_URL + 'message')
         .then(response => {
@@ -88,27 +68,39 @@ export default {
         })
     },
 
+    createMessage() {
+        this.$validator.validateAll().then(isValid => {
+            if (isValid) {
+                    axios.post(API_URL + 'message', {
+                    title: this.message.title,
+                    content: this.message.content,
+                })  
+                .then(response => {
+                    this.message.title = "",
+                    this.message.content = ""
+                    this.showMessage(); 
+                    console.log(response);
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+            }
+        })
+    },
+
     addComment() {
-        //this.comment = document.getElementById('newComment').value
         console.log(this.comment);
-/*         axios.post(API_URL + 'message', {
-            comment: this.comment
+        axios.post(API_URL + 'comment', {
+            content: this.comment
         })  
         .then(response => {
         console.log(response);
         })
         .catch(error => {
             console.log(error);
-        }) */
+        }) 
     }
   },
-/*       mounted: function() {
-        showMessage() {
-            axios.get(API_URL + 'message')
-            .then(response => this.posts = response.data)
-            .catch(error => { console.log(error); })
-        }
-    }, */
     mounted() {
         this.showMessage();
     }

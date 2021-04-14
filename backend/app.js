@@ -4,6 +4,7 @@ const app = express();
 
 const userRoutes = require('./routes/user');
 const messageRoutes = require('./routes/message');
+const commentRoutes = require('./routes/comment');
 
 app.use(cors()); 
 
@@ -22,6 +23,7 @@ const Role = db.role;
 
 app.use('/api/auth', userRoutes);
 app.use('/api/talk', messageRoutes);
+app.use('/api/talk', commentRoutes);
 
 /* function initial() {
   Role.create({
