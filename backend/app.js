@@ -19,7 +19,7 @@ const Role = db.role;
 /* db.sequelize.sync({ force: true }).then(() => {
     console.log("Drop and re-sync db.");
     initial();
-});   */
+});   */ 
 
 app.use('/api/auth', userRoutes);
 app.use('/api/talk', messageRoutes);

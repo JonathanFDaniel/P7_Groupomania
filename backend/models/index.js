@@ -47,6 +47,12 @@ db.comment.belongsTo(db.message, {
   as: "message"
 })
 
+db.users.hasMany(db.comment, { as: "comment"});
+db.comment.belongsTo(db.users, {
+  foreignKey: "userId",
+  as: "users"
+})
+
 db.ROLES = ["user", "admin", "moderator"];
 
 module.exports = db;

@@ -2,7 +2,10 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const db = require("../models");
-const users = db.users
+const users = db.users;
+
+const EMAIL_REGEX     = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const PASSWORD_REGEX  = /^(?=.*\d).{4,8}$/;
 
 exports.signup = (req, res) => {
 
@@ -10,17 +13,63 @@ exports.signup = (req, res) => {
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         email: req.body.email,
-        password: bcrypt.hashSync(req.body.password, 10),
+        password: req.body.password,
     };
-  
-    users.create(user)
-      .then(data => {res.send(data);
-      })
-      .catch(error => {res.status(500).send({message: "requet invalid"});
-      });
+
+    if (user.firstname == "" || user.lastname == "" || user.email == "") {
+      return res.status(400).send({message: "Missing parameters"});
+    }
+
+    if (user.firstname.length >= 13 || user.firstname.length <= 3) {
+      return res.status(400).json({ message : 'Wrong firstname (must be length 5 - 12)' });
+    }
+
+    if (user.lastname.length >= 13 || user.firstname.length <= 3) {
+      return res.status(400).json({ message : 'Wrong lastname (must be length 5 - 12)' });
+    }
+
+    if (!EMAIL_REGEX.test(user.email)) {
+      return res.status(400).json({ message : 'Email is not valid' });
+    }
+
+/*     if (!PASSWORD_REGEX.test(user.password)) {
+      return res.status(400).json({ 'error': 'password invalid (must length 4 - 8 and include 1 number at least)' });
+    } */
+
+  users.findOne({ where: {email: user.email}})
+    
+    .then(userFound => {
+      if (userFound) {
+        return res.status(404).send({ message: "User already created." });
+      } 
+      
+      const bcryptPassword = bcrypt.hashSync(user.password, 10) 
+
+      const newUser = {
+        email: user.email,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        password : bcryptPassword
+      } 
+    
+      users.create(newUser) 
+        .then(data => {res.send(data);
+        })
+        .catch(error => {res.status(500).send({message: "User invalid"});
+        });
+    })
+    .catch(error => {res.status(500).send({message: "Requet invalid"});
+    });
 };
 
 exports.signin = (req, res) => {
+
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if (email == "" ||  password == "") {
+    return res.status(400).json({ 'error': 'missing parameters' });
+  }
 
   users.findOne({ where: {email: req.body.email}})
   
@@ -38,37 +87,47 @@ exports.signin = (req, res) => {
         });
       }
       res.status(200).json({
-        userId: user._id,
+        userId: user.id,
         token: jwt.sign(
-          { userId: user._id },
+          { userId: user.id },
           'RAMDOM_TOKEN_SECRET',
           { expiresIn: '24h'}
         )
       });
 
     })
-    .catch(err => {
-      res.status(500).send({ message: err.message });
+    .catch(error => {
+      res.status(500).send({ message: error.message });
+    });
+};
+
+exports.getUsers = (req, res) => {
+  
+  users.findAll()
+    .then(data => {res.send(data);
+    })
+    .catch(error => {res.status(500).send({message:error.message || "Get error."});
     });
 };
 
 exports.getUser = (req, res) => {
-  
-    users.findAll()
-      .then(data => {res.send(data);
-      })
-      .catch(err => {res.status(500).send({message:err.message || "get error."});
-      });
-  };
+
+  users.findAll()
+    .then(data => {res.send(data);
+    })
+    .catch(error => {res.status(500).send({message:error.message || "Get error."});
+    });
+};
 
 exports.getUserById = (req, res) => {
+  
     const id = req.params.id;
   
     users.findByPk(id)
       .then(data => {
         res.send(data);
       })
-      .catch(err => {
+      .catch(error => {
         res.status(500).send({
           message: "Error " + id
         });
@@ -84,7 +143,7 @@ exports.modifyUser = (req, res) => {
       .then(num => {
         if (num == 1) {
           res.send({
-            message: "user was updated successfully."
+            message: "User was updated successfully."
           });
         } else {
           res.send({
@@ -108,7 +167,7 @@ exports.modifyUser = (req, res) => {
       .then(num => {
         if (num == 1) {
           res.send({
-            message: "user was deleted successfully!"
+            message: "User was deleted successfully!"
           });
         } else {
           res.send({

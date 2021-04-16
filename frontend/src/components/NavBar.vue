@@ -10,13 +10,17 @@
         </h1>
         <div class="d-flex flex-column">
 
+          <div class="d-flex justify-content-end">
             <button class="navbar-toggler" type="button" @click="navListe = !navListe" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon py-auto"></span>
             </button>
+          </div>
+
 
           <div v-if="navListe" class="navbar-nav p-2 py-auto">
             <router-link class="nav-link" to="/">Accueil</router-link>
             <router-link class="nav-link" to="/user">Profil</router-link>
+            <router-link class="nav-link" to="/signin">Se déconnecter</router-link>
           </div>
         </div>
 

@@ -11,11 +11,15 @@ exports.postMessage = (req, res,) => {
         title: req.body.title,
         content: req.body.content,
     };
+
+    if (message.title == "" || message.content == "") {
+      return res.status(400).json({message : 'missing parameters' });
+    }
   
     messages.create(message)
       .then(data => {res.send(data);
       })
-      .catch(error => {res.status(500).send({message: "requet invalid"});
+      .catch(error => {res.status(500).send({message:error.message || "requet invalid"});
       });
 };
 
@@ -24,7 +28,7 @@ exports.getAllMessage = (req, res) => {
     messages.findAll()
       .then(data => {res.send(data);
       })
-      .catch(err => {res.status(500).send({message:err.message || "get error."});
+      .catch(error => {res.status(500).send({message:error.message || "get error."});
       });
   };
   exports.getMessageById = (req, res) => {
