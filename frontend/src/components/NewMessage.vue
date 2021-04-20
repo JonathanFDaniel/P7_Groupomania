@@ -93,14 +93,15 @@ export default {
         axios.post(API_URL + 'comment', {
             content: this.comment
         })  
-        .then(response => {
-        console.log(response);
-        })
-        .catch(error => {
-            console.log(error);
-        }) 
-    }
-  },
+            .then(response => {
+            console.log(response);
+            })
+            .catch(error => {
+                console.log(error);
+            }) 
+        }
+    },
+
     mounted() {
         this.showMessage();
     }

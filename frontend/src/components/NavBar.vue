@@ -20,7 +20,7 @@
           <div v-if="navListe" class="navbar-nav p-2 py-auto">
             <router-link class="nav-link" to="/">Accueil</router-link>
             <router-link class="nav-link" to="/user">Profil</router-link>
-            <router-link class="nav-link" to="/signin">Se déconnecter</router-link>
+            <button class="btn btn-link px-0" v-on:click="signOut">Se déconnecter</button>
           </div>
         </div>
 
@@ -36,7 +36,7 @@
             </ul>
           </div>
           <div class="d-flex">
-            <router-link class="nav-link text-muted" to="/signin">Se déconnecter</router-link>
+            <button class="btn btn-link" v-on:click="signOut">Se déconnecter</button>
           </div>
         </div>
 
@@ -52,6 +52,12 @@ export default {
   data() {
     return {
       navListe: false
+    }
+  },
+  methods: {
+    signOut() {
+      localStorage.removeItem('user');
+      this.$router.push('/signin');
     }
   }
 }    

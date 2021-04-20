@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+var auth = require('../middleware/auth');
 
 const db = require("../models");
 const users = db.users;
@@ -43,13 +44,13 @@ exports.signup = (req, res) => {
         return res.status(404).send({ message: "User already created." });
       } 
       
-      const bcryptPassword = bcrypt.hashSync(user.password, 10) 
+      const hashPassword = bcrypt.hashSync(user.password, 10) 
 
       const newUser = {
         email: user.email,
         firstname: user.firstname,
         lastname: user.lastname,
-        password : bcryptPassword
+        password : hashPassword
       } 
     
       users.create(newUser) 
@@ -90,8 +91,8 @@ exports.signin = (req, res) => {
         userId: user.id,
         token: jwt.sign(
           { userId: user.id },
-          'RAMDOM_TOKEN_SECRET',
-          { expiresIn: '24h'}
+          'RANDOM_TOKEN_SECRET',
+          { expiresIn: '24h'} 
         )
       });
 
@@ -101,44 +102,42 @@ exports.signin = (req, res) => {
     });
 };
 
-exports.getUsers = (req, res) => {
+/* exports.getUsers = (req, res) => {
   
   users.findAll()
     .then(data => {res.send(data);
     })
     .catch(error => {res.status(500).send({message:error.message || "Get error."});
     });
-};
-
-exports.getUser = (req, res) => {
-
-  users.findAll()
-    .then(data => {res.send(data);
-    })
-    .catch(error => {res.status(500).send({message:error.message || "Get error."});
-    });
-};
+}; */
 
 exports.getUserById = (req, res) => {
-  
-    const id = req.params.id;
-  
-    users.findByPk(id)
-      .then(data => {
-        res.send(data);
-      })
-      .catch(error => {
-        res.status(500).send({
-          message: "Error " + id
-        });
-      });
-  };
 
+  const headerAuth  = req.headers['authorization'];
+  const userId = auth.getUserId(headerAuth);
+
+  if (userId < 0) {
+    return res.status(400).json({ 'error': 'wrong token' });
+  }
+  
+  users.findByPk(userId)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(error => {
+      res.status(500).send({
+        message: "Error" + id
+      });
+    });
+}; 
+ 
 exports.modifyUser = (req, res) => {
-    const id = req.params.id;
+
+  const headerAuth  = req.headers['authorization'];
+  const userId = auth.getUserId(headerAuth);
   
     users.update(req.body, {
-      where: { id: id }
+      where: { id: userId }
     })
       .then(num => {
         if (num == 1) {
@@ -159,10 +158,12 @@ exports.modifyUser = (req, res) => {
   };
 
   exports.deleteUser = (req, res) => {
-    const id = req.params.id;
+
+    const headerAuth  = req.headers['authorization'];
+    const userId = auth.getUserId(headerAuth);
   
     users.destroy({
-      where: { id: id }
+      where: { id: userId }
     })
       .then(num => {
         if (num == 1) {
@@ -180,4 +181,4 @@ exports.modifyUser = (req, res) => {
           message: "Could not delete user with id=" + id
         });
       });
-  };
+  }; 
