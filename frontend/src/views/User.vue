@@ -4,9 +4,10 @@
 
     <div class="container py-3">
       <div class="card p-2">
-        <h3>{{ currentUser.firstname }} {{ currentUser.lastname }}</h3>
-        <p><strong>Adresse Email : </strong>{{ currentUser.email }}</p>
-        <p><strong>Mot de passe : </strong>{{ currentUser.password }}</p>
+        <h3>{{ posts.firstname }} {{ posts.lastname }}</h3>
+        <p><strong>Id utilisateur : </strong>{{ posts.id }}</p>
+        <p><strong>Adresse Email : </strong>{{ posts.email }}</p>
+        <p><strong>Mot de passe : </strong>{{ posts.password }}</p>
       </div>
     </div>
 
@@ -20,6 +21,8 @@
 import NavBar from '@/components/NavBar.vue'
 import Footer from '@/components/Footer.vue'
 
+import API from '@/axios';
+
 export default {
   name: 'User',
   components: {
@@ -28,22 +31,25 @@ export default {
   },
   data() {
     return {
-      currentUser: {
-        firstname: 'joe', 
-        lastname: 'dan',
-        email: 'jonathandaniel@gmail.com',
-        password: 'azerty'
-      },
-      auth: true
+      posts: []
     }
   },
-  computed: {
 
-  },
-  mounted() {
-    if (this.auth !== true) {
-      this.$router.push('/');
+  methods: {
+
+    showUser() {
+      API.get('auth/profile')
+        .then(response => {
+            this.posts = response.data;
+            console.log(response.data);
+        })    
+        .catch(error => { console.log(error); 
+        })
     }
+  },
+ 
+  mounted() {
+    this.showUser();
   }
 }
 </script>

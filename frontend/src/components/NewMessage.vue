@@ -22,10 +22,15 @@
         <div class="mb-5">
             <ul class="list-group d-flex flex-column-reverse">
                 <li class="list-group-item mt-3" v-for="post in posts" :key="post.posts">
-
-                    <h5>{{ post.title }} </h5>
-
-                    <p>{{ post.content }}</p>
+                    <div class=row>
+                        <div class=col-11>
+                            <h5>{{ post.title }} </h5>
+                            <p>{{ post.content }}</p>
+                        </div>
+                        <div class=col-1>
+                            <button type="submit" @click="deleteMessage" class="btn btn-light btn-sm my-2"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                    </div>
 
                     <input v-model="comment" v-on:keyup.enter="addComment" type="text" class="form-control" placeholder="Ecrivez un commentaire">
 
@@ -38,9 +43,7 @@
 
 <script>
 
-import axios from 'axios';
-
-const API_URL = 'http://localhost:3000/api/talk/';
+import API from '@/axios';
 
 export default {
     
@@ -59,7 +62,7 @@ export default {
   methods: {
 
     showMessage() {
-        axios.get(API_URL + 'message')
+        API.get('message/')
         .then(response => {
             this.posts = response.data;
             console.log(response.data);
@@ -69,9 +72,10 @@ export default {
     },
 
     createMessage() {
+         
         this.$validator.validateAll().then(isValid => {
-            if (isValid) {
-                    axios.post(API_URL + 'message', {
+            if (isValid) { 
+                    API.post('message/new', {
                     title: this.message.title,
                     content: this.message.content,
                 })  
@@ -85,12 +89,23 @@ export default {
                     console.log(error);
                 })
             }
-        })
+        }) 
+    },
+
+    deleteMessage() {
+         
+        API.delete('message')  
+            .then(response => { 
+                console.log(response);
+            })
+            .catch(error => {
+                console.log(error);
+            })
     },
 
     addComment() {
-        console.log(this.comment);
-        axios.post(API_URL + 'comment', {
+
+        API.post('message/comment', {
             content: this.comment
         })  
             .then(response => {
@@ -99,7 +114,7 @@ export default {
             .catch(error => {
                 console.log(error);
             }) 
-        }
+        } 
     },
 
     mounted() {

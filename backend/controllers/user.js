@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-var auth = require('../middleware/auth');
+const auth = require('../middleware/auth');
 
 const db = require("../models");
 const users = db.users;

@@ -3,8 +3,7 @@ var jwt = require('jsonwebtoken');
 module.exports = {
 
   getUserId: (authorization) => {
-    var userId = -1;
-    var token = (authorization != null) ? authorization.replace('Bearer ', '') : null;
+    const token = authorization.split(' ')[1];
     if(token != null) {
       try {
         const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');

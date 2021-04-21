@@ -22,8 +22,8 @@ const Role = db.role;
 });   */ 
 
 app.use('/api/auth', userRoutes);
-app.use('/api/talk', messageRoutes);
-app.use('/api/talk', commentRoutes);
+app.use('/api/message', messageRoutes);
+app.use('/api/comment', commentRoutes);
 
 /* function initial() {
   Role.create({
