@@ -19,6 +19,9 @@ export default {
     NavBar,
     NewMessage,
 
-  }
+  }/* ,
+   beforeCreate() {
+    this.$router.push('/signin');
+  }  */
 }
 </script>

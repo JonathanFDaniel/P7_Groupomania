@@ -23,16 +23,30 @@
             <ul class="list-group d-flex flex-column-reverse">
                 <li class="list-group-item mt-3" v-for="post in posts" :key="post.posts">
                     <div class=row>
-                        <div class=col-11>
-                            <h5>{{ post.title }} </h5>
-                            <p>{{ post.content }}</p>
+                        <div class="col-11 my-1">
+                            <h6 class="font-weight-bold my-0">{{ post.user.firstname }} {{ post.user.lastname }}</h6>
+                            <p class="my-0 text-muted"><small><em>{{ post.createdAt}}</em></small></p>
                         </div>
-                        <div class=col-1>
-                            <button type="submit" @click="deleteMessage" class="btn btn-light btn-sm my-2"><span aria-hidden="true">&times;</span></button>
+                        <div class="col-1">
+                            <button type="submit" @click="deleteMessage" class="btn px-1"><span aria-hidden="true">&times;</span></button>
                         </div>
                     </div>
+             
+                    <div class="bg-light rounded text-dark my-2 p-2">
+                        <p class="my-0"><small>{{ post.title }}</small></p>
+                        <p class="my-0"><small>{{ post.content }}</small></p>
+                    </div>
 
-                    <input v-model="comment" v-on:keyup.enter="addComment" type="text" class="form-control" placeholder="Ecrivez un commentaire">
+                    <div class="my-2 p-2">
+                        <ul class="list-group d-flex flex-column-reverse">
+                            <li class="list-group-item d-flex justify-content-between" v-for="post in post.comment" :key="post.comment">
+                               <span class="my-0"><small>{{ post.content }}</small></span>
+                               <span class="my-0">lucie</span>
+                            </li>
+                        </ul>  
+                    </div> 
+                       
+                    <input v-model="comment" v-on:keyup.enter="addComment" type="text" class="form-control bg-light border border-secondary"  placeholder="Ecrivez un commentaire">
 
                 </li>
             </ul> 
@@ -55,7 +69,7 @@ export default {
             content: '',
         },
         comment: '', 
-        posts: []
+        posts: [],
     }
   },
 
@@ -105,11 +119,12 @@ export default {
 
     addComment() {
 
-        API.post('message/comment', {
+        API.post('comment/new', {
             content: this.comment
         })  
             .then(response => {
             console.log(response);
+            this.showMessage(); 
             })
             .catch(error => {
                 console.log(error);

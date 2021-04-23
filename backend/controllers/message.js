@@ -1,12 +1,11 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth');
 
 const db = require("../models");
 const messages = db.message
 const users = db.users;
+const comments = db.comment
 
-exports.createMessage = (req, res,) => {
+exports.createMessage = (req, res) => {
 
   const headerAuth  = req.headers['authorization'];
   const userId = auth.getUserId(headerAuth);
@@ -47,7 +46,15 @@ exports.createMessage = (req, res,) => {
 
 exports.getAllMessage = (req, res) => {
   
-  messages.findAll()
+  messages.findAll({
+    include: [{
+      model: users, as: "user",
+      attributes: [ 'firstname', 'lastname' ]
+    },{
+      model: comments, as: "comment",
+      attributes: [ 'content' ]
+    }],
+  })
     .then(data => {res.send(data);
     })
     .catch(error => {res.status(500).send({message:error.message || "get error."});
