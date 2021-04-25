@@ -15,6 +15,14 @@ module.exports = (sequelize, Sequelize) => {
         content: {
             type: Sequelize.STRING,
             allowNull: false,
+        },
+        attachement: {
+            type: Sequelize.STRING,
+            allowNull: true,
+        },
+        likes: {
+            type: Sequelize.INTEGER,
+            allowNull: true
         }
     });
   

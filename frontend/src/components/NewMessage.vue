@@ -20,8 +20,8 @@
         </form>
 
         <div class="mb-5">
-            <ul class="list-group d-flex flex-column-reverse">
-                <li class="list-group-item mt-3" v-for="post in posts" :key="post.posts">
+            <ul v-if="posts.length" class="list-group d-flex flex-column-reverse">
+                <li class="list-group-item mt-3" v-for="(post, index) in posts" :post="post" :index="index" :key="post.id">
                     <div class=row>
                         <div class="col-11 my-1">
                             <h6 class="font-weight-bold my-0">{{ post.user.firstname }} {{ post.user.lastname }}</h6>
@@ -46,7 +46,7 @@
                         </ul>  
                     </div> 
                        
-                    <input v-model="comment" v-on:keyup.enter="addComment" type="text" class="form-control bg-light border border-secondary"  placeholder="Ecrivez un commentaire">
+                    <input v-model="comment" v-on:keyup.enter="addComment(post, index)" type="text" class="form-control bg-light border border-secondary"  placeholder="Ecrivez un commentaire">
 
                 </li>
             </ul> 
@@ -70,12 +70,15 @@ export default {
         },
         comment: '', 
         posts: [],
+        userValid: false,
+        index: -1,
+        messageId: ''
     }
   },
 
   methods: {
-
     showMessage() {
+        
         API.get('message/')
         .then(response => {
             this.posts = response.data;
@@ -117,17 +120,35 @@ export default {
             })
     },
 
-    addComment() {
+    setActiveTutorial(post, index) {
 
-        API.post('comment/new', {
+        this.currentTutorial = post;
+        this.currentIndex = index;
+        console.log(post.id);
+
+    },
+
+    addComment(post) {
+
+        this.messageId = post.id
+
+        const messageId = new URLSearchParams();
+        messageId.append('messageId', this.messageId);
+ 
+        console.log(messageId.messageId)
+
+        API.post('comment'/*, params  this.messageId  {
+            params: {
+                messageId: this.messageId
+            }} */, {
             content: this.comment
         })  
             .then(response => {
             console.log(response);
             this.showMessage(); 
             })
-            .catch(error => {
-                console.log(error);
+            .catch(messageId => {
+                console.log(messageId);
             }) 
         } 
     },

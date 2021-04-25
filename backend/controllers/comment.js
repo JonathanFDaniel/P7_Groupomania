@@ -6,11 +6,11 @@ const users = db.users
 
 exports.postComment = (req, res) => {
 
-const headerAuth = req.headers['authorization'];
-const userId = auth.getUserId(headerAuth);
+  const headerAuth = req.headers['authorization'];
+  const userId = auth.getUserId(headerAuth);
 
-    const messageId = 1;
-
+  const messageId = req.params.messageId;
+ 
     const comment = {
         content: req.body.content,
     };
@@ -40,6 +40,15 @@ const userId = auth.getUserId(headerAuth);
     })
     .catch(error => {
       res.status(500).send({ message: error.message });
+    });
+};
+
+exports.getAllComment = (req, res) => {
+  
+  comments.findAll()
+    .then(data => {res.send(data);
+    })
+    .catch(error => {res.status(500).send({message:error.message || "get error."});
     });
 };
  
