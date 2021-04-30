@@ -54,11 +54,13 @@ db.comment.belongsTo(db.users, {
   as: "users"
 })
 
+db.users.hasMany(db.like, { as: "like"});
 db.like.belongsTo(db.users, {
   foreignKey: 'userId',
   as: 'user',
 });
 
+db.message.hasMany(db.like, { as: "like"});
 db.like.belongsTo(db.message, {
   foreignKey: 'messageId',
   as: 'message',

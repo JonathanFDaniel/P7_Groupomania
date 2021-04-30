@@ -3,24 +3,34 @@
 
         <h2>Publier un nouveau message</h2>
 
-        <form name="form" @submit.prevent="createMessage" class="row py-3">  
+        <form name="form" @submit.prevent="createMessage"> 
 
-            <div class="col-sm-2 form-group mt-2">
-                <input v-model="message.title" type="string" class="form-control" id="messageTitle" placeholder="titre" required>
+            <div class="row py-3">
+                <div class="col-sm-4 form-group mt-2">
+                    <input v-model="message.title" type="string" class="form-control" id="messageTitle" placeholder="Titre" required>
+                </div>
+
+                <div class="col-sm-8 form-group mt-2">
+                    <input v-model="message.content" type="text" class="form-control" id="messageContent" placeholder="Contenu du message" required>
+                </div>
             </div>
 
-            <div class="col-sm-8 form-group mt-2">
-                <input v-model="message.content" type="text" class="form-control" id="messageContent" placeholder="contenu du message" required>
+            <div class="row">
+                <div class="form-group">
+                    <label for="addImage" class="text-secondary">Image</label>
+                    <input type="file" name="file" class="form-control-file mx-sm-2" id="addImage">
+                </div>
             </div>
 
-            <div class="col-sm-2 d-flex justify-content-start mt-2">
+            <div class="d-flex justify-content-end mt-2">
                 <button type="submit" class="btn btn-primary">Valider</button>
             </div>
-
         </form>
 
-        <div class="mb-5">
-            <ul v-if="posts.length" class="list-group d-flex flex-column-reverse">
+        <hr>
+
+        <div class="row justify-content-center mb-5">
+            <ul v-if="posts.length" class="list-group col-lg-8 d-flex flex-column-reverse">
                 <li class="list-group-item mt-3" v-for="(post, index) in posts" :post="post" :index="index" :key="post.id">
                     <div class=row>
                         <div class="col-11 my-1">
@@ -33,8 +43,26 @@
                     </div>
              
                     <div class="bg-light rounded text-dark my-2 p-2">
-                        <p class="my-0"><small>{{ post.title }}</small></p>
+                        <div class="row" v-if="post.attachement === null">
+                            <div class="col-sm-12">
+                                <div class="d-flex justify-content-center preview-images mb-2">
+                                    <img src="../assets/download.jpg" width="95%" height="auto" alt="photo">
+                                </div>
+                            </div>
+                        </div>
+                    </div>  
+                    <div>
+                        <p class="font-weight-bold my-0"><small>{{ post.title }}</small></p>
                         <p class="my-0"><small>{{ post.content }}</small></p>
+                    </div>
+
+                    <div class="py-0">
+                        <p>
+                            <button type="button"  class="btn btn-outline-primary btn-sm" @click="like(post)" v-bind:class="{ active: isActive}">
+                                like
+                            </button> 
+                            <span v-if="post.likes !== null"> {{ post.likes }}</span>
+                        </p>   
                     </div>
 
                     <div class="my-2 p-2">
@@ -43,11 +71,11 @@
                                <span class="my-0"><small>{{ post.content }}</small></span>
                                <span class="my-0">lucie</span>
                             </li>
-                        </ul>  
+                        </ul>               
                     </div> 
                        
-                    <input v-model="comment" v-on:keyup.enter="addComment(post, index)" type="text" class="form-control bg-light border border-secondary"  placeholder="Ecrivez un commentaire">
-
+                    <input v-model="comment" v-on:keyup.enter="addComment(post)" type="text" class="form-control bg-light border border-secondary"  placeholder="Ecrivez un commentaire">
+                    
                 </li>
             </ul> 
         </div>
@@ -67,12 +95,15 @@ export default {
         message: {
             title: '',
             content: '',
+            attachement: '',
         },
+        image: '',
         comment: '', 
         posts: [],
         userValid: false,
         index: -1,
-        messageId: ''
+        messageId: '',
+        isActive: false
     }
   },
 
@@ -89,12 +120,15 @@ export default {
     },
 
     createMessage() {
+
+        /* const image = document.getElementById('addImage').files[0] */
          
-        this.$validator.validateAll().then(isValid => {
+         this.$validator.validateAll().then(isValid => {
             if (isValid) { 
                     API.post('message/new', {
                     title: this.message.title,
                     content: this.message.content,
+                    /* attachement: image */
                 })  
                 .then(response => {
                     this.message.title = "",
@@ -120,27 +154,27 @@ export default {
             })
     },
 
-    setActiveTutorial(post, index) {
+    like(post) {
 
-        this.currentTutorial = post;
-        this.currentIndex = index;
-        console.log(post.id);
+        const messageId = post.id
+
+        API.post('like/' + messageId + '/likeMessage')
+            .then(() => {
+            console.log(API);
+            this.showMessage();
+            this.isActive = !this.isActive; 
+            })
+            .catch(messageId => {
+                console.log(messageId);
+            }) 
 
     },
 
     addComment(post) {
 
-        this.messageId = post.id
+        const messageId = post.id
 
-        const messageId = new URLSearchParams();
-        messageId.append('messageId', this.messageId);
- 
-        console.log(messageId.messageId)
-
-        API.post('comment'/*, params  this.messageId  {
-            params: {
-                messageId: this.messageId
-            }} */, {
+        API.post('comment/' + messageId, {
             content: this.comment
         })  
             .then(response => {

@@ -3,8 +3,6 @@ const router = express.Router();
 
 const likeController = require('../controllers/like')
 
-router.get('/', likeController.getAllLike);
-router.post('/likeMessage/:messageId', likeController.postLike); 
-router.post('/dislikeMessage/:messageId', likeController.postDislike);
+router.post('/:messageId/likeMessage', likeController.postLike); 
 
 module.exports = router;

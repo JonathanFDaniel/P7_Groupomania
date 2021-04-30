@@ -52,8 +52,6 @@
 
 <script>
 
-//import AuthService from '../services/auth.service';
-
 import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/api/auth/'; 

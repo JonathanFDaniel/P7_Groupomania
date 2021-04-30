@@ -3,7 +3,8 @@ const auth = require('../middleware/auth');
 const db = require("../models");
 const messages = db.message
 const users = db.users;
-const comments = db.comment
+const islikes = db.like;
+const comments = db.comment;
 
 exports.createMessage = (req, res) => {
 

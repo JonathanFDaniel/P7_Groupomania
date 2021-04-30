@@ -18,10 +18,6 @@ export default {
   components: {
     NavBar,
     NewMessage,
-
-  }/* ,
-   beforeCreate() {
-    this.$router.push('/signin');
-  }  */
+  }
 }
 </script>
