@@ -30,7 +30,7 @@
         <hr>
 
         <div class="row justify-content-center mb-5">
-            <ul v-if="posts.length" class="list-group col-lg-8 d-flex flex-column-reverse">
+            <ul v-if="posts.length" class="list-group col-lg-8 d-flex">
                 <li class="list-group-item mt-3" v-for="(post, index) in posts" :post="post" :index="index" :key="post.id">
                     <div class=row>
                         <div class="col-11 my-1">
@@ -38,27 +38,27 @@
                             <p class="my-0 text-muted"><small><em>{{ post.createdAt}}</em></small></p>
                         </div>
                         <div class="col-1">
-                            <button type="submit" @click="deleteMessage" class="btn px-1"><span aria-hidden="true">&times;</span></button>
+                            <button type="submit" @click="deleteMessage(post)" class="btn px-1 py-0"><span aria-hidden="true">&times;</span></button>
                         </div>
                     </div>
              
-                    <div class="bg-light rounded text-dark my-2 p-2">
+                    <div class="bg-light rounded text-dark py-2">
                         <div class="row" v-if="post.attachement === null">
                             <div class="col-sm-12">
-                                <div class="d-flex justify-content-center preview-images mb-2">
+                                <div class="d-flex justify-content-center preview-images">
                                     <img src="../assets/download.jpg" width="95%" height="auto" alt="photo">
                                 </div>
                             </div>
                         </div>
                     </div>  
-                    <div>
-                        <p class="font-weight-bold my-0"><small>{{ post.title }}</small></p>
-                        <p class="my-0"><small>{{ post.content }}</small></p>
+                    <div class="mb-2">
+                        <h6 class="my-0">{{ post.title }}</h6>
+                        <p class="my-0">{{ post.content }}</p>
                     </div>
 
                     <div class="py-0">
                         <p>
-                            <button type="button"  class="btn btn-outline-primary btn-sm" @click="like(post)" v-bind:class="{ active: isActive}">
+                            <button type="button"  class="btn btn-outline-primary btn-sm py-0" @click="like(post)" v-bind:class="{ active: isActive}">
                                 like
                             </button> 
                             <span v-if="post.likes !== null"> {{ post.likes }}</span>
@@ -66,10 +66,11 @@
                     </div>
 
                     <div class="my-2 p-2">
-                        <ul class="list-group d-flex flex-column-reverse">
-                            <li class="list-group-item d-flex justify-content-between" v-for="post in post.comment" :key="post.comment">
-                               <span class="my-0"><small>{{ post.content }}</small></span>
-                               <span class="my-0">lucie</span>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex row" v-for="postComment in post.comment" :key="postComment.comment">
+                                <p class="col-9 my-0">{{ postComment.content }}</p>
+                                <p class="col-2 my-0 font-weight-bold">Lucie</p>
+                                <button type="submit" @click="deleteComment(post, postComment)" class="col-1 pt-0 btn"><span aria-hidden="true">&times;</span></button>                             
                             </li>
                         </ul>               
                     </div> 
@@ -97,8 +98,8 @@ export default {
             content: '',
             attachement: '',
         },
+        comment: '',
         image: '',
-        comment: '', 
         posts: [],
         userValid: false,
         index: -1,
@@ -110,7 +111,7 @@ export default {
   methods: {
     showMessage() {
         
-        API.get('message/')
+        API.get('message')
         .then(response => {
             this.posts = response.data;
             console.log(response.data);
@@ -143,11 +144,14 @@ export default {
         }) 
     },
 
-    deleteMessage() {
+    deleteMessage(post) {
+
+        const messageId = post.id;
          
-        API.delete('message')  
+        API.delete('message/' + messageId)  
             .then(response => { 
                 console.log(response);
+                this.showMessage();
             })
             .catch(error => {
                 console.log(error);
@@ -156,11 +160,11 @@ export default {
 
     like(post) {
 
-        const messageId = post.id
+        const messageId = post.id;
 
         API.post('like/' + messageId + '/likeMessage')
-            .then(() => {
-            console.log(API);
+            .then(response => {
+            console.log(response);
             this.showMessage();
             this.isActive = !this.isActive; 
             })
@@ -172,20 +176,36 @@ export default {
 
     addComment(post) {
 
-        const messageId = post.id
+        const messageId = post.id;
 
         API.post('comment/' + messageId, {
             content: this.comment
         })  
             .then(response => {
             console.log(response);
+            this.comment = '';
             this.showMessage(); 
             })
             .catch(messageId => {
                 console.log(messageId);
             }) 
-        } 
     },
+
+    deleteComment(post, postComment) {
+
+        const messageId = post.id;
+        const commentId = postComment.id;
+            
+        API.delete('comment/' + messageId + '/' + commentId)  
+            .then(response => { 
+                console.log(response);
+                this.showMessage();
+            })
+            .catch(error => {
+                console.log(error);
+            }) 
+        }
+    }, 
 
     mounted() {
         this.showMessage();

@@ -10,6 +10,6 @@ router.get('/', messageController.getAllMessage);
 /* router.get('/message/:id', messageController.getMessageById);
 router.get('/:id', userController.getUserById);
 router.put('/:id', userController.modifyUser);*/
-router.delete('/', messageController.deleteMessage); 
+router.delete('/:messageId', messageController.deleteMessage); 
 
 module.exports = router;

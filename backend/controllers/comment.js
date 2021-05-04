@@ -51,4 +51,32 @@ exports.getAllComment = (req, res) => {
     .catch(error => {res.status(500).send({message:error.message || "get error."});
     });
 };
- 
+
+exports.deleteComment = (req, res) => {
+
+  const headerAuth  = req.headers['authorization'];
+  const userId = auth.getUserId(headerAuth);
+
+  const messageId = req.params.messageId;
+  const commentId = req.params.commentId;
+  
+  comments.destroy({
+    where: { id: commentId, userId: userId, messageId: messageId }
+  })
+  .then(num => {
+    if (num == 1) {
+      res.send({
+        message: "Comment was deleted successfully!"
+      });
+    } else {
+      res.send({
+        message: `Cannot delete user with id=${id}. Maybe Comment was not found!`
+      });
+    }
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Could not delete Comment" 
+    });
+  });;
+};

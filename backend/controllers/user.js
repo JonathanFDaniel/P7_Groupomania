@@ -135,50 +135,62 @@ exports.modifyUser = (req, res) => {
 
   const headerAuth  = req.headers['authorization'];
   const userId = auth.getUserId(headerAuth);
-  
-    users.update(req.body, {
-      where: { id: userId }
-    })
-      .then(num => {
-        if (num == 1) {
-          res.send({
-            message: "User was updated successfully."
-          });
-        } else {
-          res.send({
-            message: `Cannot update user with id=${id}. Maybe user was not found or req.body is empty!`
-          });
-        }
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: "Error updating user with id=" + id
-        });
-      });
-  };
 
-  exports.deleteUser = (req, res) => {
+  const firstname = req.body.firstname;
+  const lastname = req.body.lastname;
+  const email = req.body.email;
+  //const hashPassword = bcrypt.hashSync(req.body.password, 10);
 
-    const headerAuth  = req.headers['authorization'];
-    const userId = auth.getUserId(headerAuth);
-  
-    users.destroy({
-      where: { id: userId }
+  users.findOne({
+    atributes: ['id', 'firstname' , 'lastname', 'email'/* , 'password' */ ],
+    where: {id: userId}
     })
-      .then(num => {
-        if (num == 1) {
-          res.send({
-            message: "User was deleted successfully!"
-          });
-        } else {
-          res.send({
-            message: `Cannot delete user with id=${id}. Maybe user was not found!`
-          });
-        }
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: "Could not delete user with id=" + id
+    .then((userFound) => {
+      if(userFound) {
+        console.log(userFound);
+
+        userFound.update({
+          firstname: (firstname ? firstname : userFound.firstname),
+          lastname: (lastname ? lastname : userFound.lastname),
+          email: (email ? email : userFound.email),
+          //password: (password ? hashPassword : userFound.password)
+        })
+        .then(() =>  {
+          res.send({ message: "User was updated successfully." }); 
+        })
+        .catch(err => {
+          res.status(500).json({ 'error': 'cannot update user' });
         });
+      } else {
+        res.status(404).json({ 'error': 'user not found' });
+      }
+    })
+    .catch(error => {return res.status(500).json({ 'error': 'unable to verify user' });
+  });
+};
+
+exports.deleteUser = (req, res) => {
+
+  const headerAuth  = req.headers['authorization'];
+  const userId = auth.getUserId(headerAuth);
+
+  users.destroy({
+    where: { id: userId }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "User was deleted successfully!"
+        });
+      } else {
+        res.send({
+          message: `Cannot delete user with id=${id}. Maybe user was not found!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Could not delete user with id=" + id
       });
-  }; 
+    });
+}; 

@@ -1,56 +1,51 @@
 <template>
   <div class="user">
     <NavBar />
-
     <div class="container py-3">
-      <div class="card p-2">
-        <h3>{{ posts.firstname }} {{ posts.lastname }}</h3>
-        <p><strong>Id utilisateur : </strong>{{ posts.id }}</p>
-        <p><strong>Adresse Email : </strong>{{ posts.email }}</p>
-        <p><strong>Mot de passe : </strong>{{ posts.password }}</p>
-      </div>
+      
+      <ShowProfile v-if="behavior.ShowProfile === true" @go-to-update-profile="goToUpdateProfile" />
+      <UpdateProfile v-if="behavior.UpdateProfile === true" @go-to-show-profile="goToShowProfile" />
+      <!-- <Footer /> -->
+      
     </div>
-
-    <Footer />
   </div>
+
+
 </template>
 
 <script>
-// @ is an alias to /src
 
 import NavBar from '@/components/NavBar.vue'
-import Footer from '@/components/Footer.vue'
-
-import API from '@/axios';
+import ShowProfile from '@/components/ShowProfile.vue'
+import UpdateProfile from '@/components/UpdateProfile.vue'
+//import Footer from '@/components/Footer.vue'
 
 export default {
   name: 'User',
   components: {
     NavBar,
-    Footer
+    ShowProfile,
+    UpdateProfile,
+    //Footer,
   },
   data() {
     return {
-      posts: []
-    }
+      title: "Création d'une société",
+      behavior: {
+        ShowProfile: true,
+        UpdateProfile: false,
+      },
+    };
   },
-
   methods: {
-
-    showUser() {
-      API.get('auth/profile')
-        .then(response => {
-            this.posts = response.data;
-            console.log(response.data);
-        })    
-        .catch(error => { console.log(error); 
-        })
-    }
-  },
- 
-  mounted() {
-    this.showUser();
-  }
+			goToUpdateProfile() {
+				this.behavior.ShowProfile = false;
+				this.behavior.UpdateProfile = true;
+			},
+      goToShowProfile() {
+				this.behavior.ShowProfile = true;
+				this.behavior.UpdateProfile = false;
+			},
+		},
 }
 </script>
-

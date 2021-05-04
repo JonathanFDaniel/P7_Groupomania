@@ -53,8 +53,12 @@ exports.getAllMessage = (req, res) => {
       attributes: [ 'firstname', 'lastname' ]
     },{
       model: comments, as: "comment",
-      attributes: [ 'content' ]
+      attributes: [ 'id', 'content' ]
     }],
+    order:[
+      ["id","DESC"]
+    ],
+    limit: 10,
   })
     .then(data => {res.send(data);
     })
@@ -82,10 +86,12 @@ exports.deleteMessage = (req, res) => {
   const headerAuth  = req.headers['authorization'];
   const userId = auth.getUserId(headerAuth);
 
+  const messageId = req.params.messageId;
+
   console.log(userId);
 
   messages.destroy({
-    where: { id: userId }
+    where: { id: messageId }
   })
     .then(num => {
       if (num == 1) {
