@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const path = require('path');
 
 const userRoutes = require('./routes/user');
 const messageRoutes = require('./routes/message');
@@ -21,6 +22,8 @@ const Role = db.role;
     console.log("Drop and re-sync db.");
     initial();
 });   */ 
+
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/api/auth', userRoutes);
 app.use('/api/message', messageRoutes);

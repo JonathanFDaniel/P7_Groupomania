@@ -43,10 +43,10 @@
                     </div>
              
                     <div class="bg-light rounded text-dark py-2">
-                        <div class="row" v-if="post.attachement === null">
+                        <div class="row" v-if="post.attachement !== null">
                             <div class="col-sm-12">
                                 <div class="d-flex justify-content-center preview-images">
-                                    <img src="../assets/download.jpg" width="95%" height="auto" alt="photo">
+                                    <img :src="post.attachement" width="95%" height="auto" :alt="post.attachement">
                                 </div>
                             </div>
                         </div>
@@ -90,8 +90,8 @@ import API from '@/axios';
 
 export default {
     
-  name: 'NewMessage',
-    data() {
+name: 'NewMessage',
+data() {
     return {
         message: {
             title: '',
@@ -99,16 +99,17 @@ export default {
             attachement: '',
         },
         comment: '',
-        image: '',
+        imageFile: null,
         posts: [],
         userValid: false,
         index: -1,
         messageId: '',
         isActive: false
     }
-  },
+},
 
-  methods: {
+methods: {
+    
     showMessage() {
         
         API.get('message')
@@ -122,26 +123,32 @@ export default {
 
     createMessage() {
 
-        /* const image = document.getElementById('addImage').files[0] */
-         
-         this.$validator.validateAll().then(isValid => {
-            if (isValid) { 
-                    API.post('message/new', {
-                    title: this.message.title,
-                    content: this.message.content,
-                    /* attachement: image */
-                })  
-                .then(response => {
-                    this.message.title = "",
-                    this.message.content = ""
-                    this.showMessage(); 
-                    console.log(response);
-                })
-                .catch(error => {
-                    console.log(error);
-                })
-            }
-        }) 
+        this.imageFile = document.getElementById('addImage').files[0] 
+
+        const fd = new FormData();
+            fd.append('title', this.message.title)
+            fd.append('content', this.message.content)   
+            fd.append('image', this.imageFile )  
+            for (var value of fd.values()) {
+                console.log(value);
+            } 
+            this.$validator.validateAll().then(isValid => {
+                if (isValid) {
+                    API.post('message/new', fd, {
+                            headers: { "Content-Type": "multipart/form-data" },
+                        }  
+                    )  
+                    .then(response => {
+                        this.message.title = ""
+                        this.message.content = "" 
+                        this.showMessage(); 
+                        console.log(response);
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    }) 
+                }
+            }) 
     },
 
     deleteMessage(post) {

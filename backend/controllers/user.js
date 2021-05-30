@@ -88,7 +88,12 @@ exports.signin = (req, res) => {
         });
       }
       res.status(200).json({
-        userId: user.id,
+        user: {
+          id: user.id,
+          firstname: user.firstname,
+          lastname: user.lastname,
+          email: user.email,
+        },
         token: jwt.sign(
           { userId: user.id },
           'RANDOM_TOKEN_SECRET',

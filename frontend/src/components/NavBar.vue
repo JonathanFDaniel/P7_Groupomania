@@ -16,8 +16,8 @@
             </button>
           </div>
 
-
           <div v-if="navListe" class="navbar-nav p-2 py-auto">
+            <p class="text-light my-2">{{ $store.state.user.email }}</p>
             <router-link class="nav-link" to="/">Accueil</router-link>
             <router-link class="nav-link" to="/user">Profil</router-link>
             <button class="btn btn-link px-0" v-on:click="signOut">Se déconnecter</button>
@@ -34,8 +34,10 @@
                   <router-link class="nav-link" to="/user">Profil</router-link>
               </li>
             </ul>
+            
           </div>
           <div class="d-flex">
+            <p class="text-light my-2">{{ $store.state.user.email }}</p>
             <button class="btn btn-link" v-on:click="signOut">Se déconnecter</button>
           </div>
         </div>
@@ -55,8 +57,9 @@ export default {
     }
   },
   methods: {
-    signOut() {
-      localStorage.removeItem('user');
+    async signOut() {
+      await localStorage.removeItem('user');
+      this.$store.dispatch("user/setEmptyUser");
       this.$router.push('/signin');
     }
   }

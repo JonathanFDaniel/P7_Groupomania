@@ -38,14 +38,14 @@ export default {
     };
   },
   methods: {
-			goToUpdateProfile() {
-				this.behavior.ShowProfile = false;
-				this.behavior.UpdateProfile = true;
-			},
-      goToShowProfile() {
-				this.behavior.ShowProfile = true;
-				this.behavior.UpdateProfile = false;
-			},
-		},
+    goToUpdateProfile() {
+      this.behavior.ShowProfile = false;
+      this.behavior.UpdateProfile = true;
+    },
+    goToShowProfile() {
+      this.behavior.ShowProfile = true;
+      this.behavior.UpdateProfile = false;
+    },
+  },
 }
 </script>

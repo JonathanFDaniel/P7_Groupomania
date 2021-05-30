@@ -1,4 +1,5 @@
 const auth = require('../middleware/auth');
+var fs = require('fs');
 
 const db = require("../models");
 const messages = db.message
@@ -6,7 +7,9 @@ const users = db.users;
 const islikes = db.like;
 const comments = db.comment;
 
-exports.createMessage = (req, res) => {
+exports.createMessage = (req, res,) => {
+
+  console.log(req.file.filename); 
 
   const headerAuth  = req.headers['authorization'];
   const userId = auth.getUserId(headerAuth);
@@ -14,6 +17,7 @@ exports.createMessage = (req, res) => {
     const message = {
         title: req.body.title,
         content: req.body.content,
+        attachement: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     };
 
     if (message.title == "" || message.content == "") {
@@ -30,6 +34,7 @@ exports.createMessage = (req, res) => {
       const newMessage = {
         title: message.title,
         content: message.content,
+        attachement: message.attachement,
         userId: userId 
       } 
 
@@ -42,7 +47,7 @@ exports.createMessage = (req, res) => {
     })
     .catch(error => {
       res.status(500).send({ message: error.message });
-    });
+    }); 
 };
 
 exports.getAllMessage = (req, res) => {

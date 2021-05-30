@@ -4,10 +4,10 @@
 
       <h1>Mon profile</h1>
       <div class="card p-2">
-        <h3>{{ posts.firstname }} {{ posts.lastname }}</h3>
-        <p><strong>Id utilisateur : </strong>{{ posts.id }}</p>
-        <p><strong>Adresse Email : </strong>{{ posts.email }}</p>
-        <p><strong>Mot de passe : </strong>{{ posts.password }}</p>
+        <h3>{{ $store.state.user.firstname }} {{ $store.state.user.lastname }}</h3>
+        <p><strong>Id utilisateur : </strong>{{ $store.state.user.id }}</p>
+        <p><strong>Adresse Email : </strong>{{ $store.state.user.email }}</p>
+        <p><strong>Mot de passe : </strong>{{ $store.state.user.password }}</p>
        
         <div class='d-flex d-flex flex-wrap'>
           <button type="button" @click="goToUpdateProfile()" class="btn btn-outline-secondary btn-sm col-lg-2 col-sm-4 mx-1 mb-1">modifier mon profil</button>

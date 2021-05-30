@@ -7,7 +7,6 @@
 </template>
 
 <script>
-// @ is an alias to /src
 
 import NavBar from '@/components/NavBar.vue'
 import NewMessage from '@/components/NewMessage.vue'

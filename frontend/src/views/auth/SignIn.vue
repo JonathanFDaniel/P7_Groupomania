@@ -6,12 +6,12 @@
 
         <p>Entrez votre email et votre mot de passe pour vous connecter</p>
         
-        <form name="form" @submit.prevent="valideUser">  
+        <form name="form" @submit.prevent="postLogin">  
 
             <div class="form-group mt-3">
                 <label for="email">Email</label>
                 <input
-                    v-model="user.email"
+                    v-model="email"
                     v-validate="'required'"
                     type="email"
                     class="form-control"
@@ -25,7 +25,7 @@
             <div class="form-group mt-3">
                 <label for="password">Mot de Passe</label>
                 <input
-                    v-model="user.password"
+                    v-model="password"
                     v-validate="'required'"
                     type="password"
                     class="form-control"
@@ -36,7 +36,7 @@
                     <div class="alert-danger">{{errors.first('password')}}</div>
             </div>
 
-            <div v-if="message" class="alert alert-danger mt-3" role="alert">
+            <div v-if="noUserMessage" class="alert alert-danger mt-3" role="alert">
                 {{errorMessage}}
             </div>
     
@@ -54,31 +54,30 @@
 
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api/auth/'; 
+const API_URL = 'http://localhost:3000/api/auth/';
 
 export default {
   name: 'Signin',
   data() {
-    return {
-        user: {
-            email: '',
-            password: ''
-        },
+    return {      
+        email: '',
+        password: '',
         errorMessage: 'User not found !',
-        message: false
+        noUserMessage: false,
     }
   },
   methods: {
-    valideUser() {
+      postLogin() {
         this.$validator.validateAll().then(isValid => {
             if (isValid) {
                 axios.post(API_URL + 'signin', {
-                    email: this.user.email,
-                    password: this.user.password
+                    email: this.email,
+                    password: this.password
                 })  
                 .then(response => {
                     if (response.data.token) {
                         localStorage.setItem('user', JSON.stringify(response.data));
+                        this.$store.dispatch("user/setUser", { payload: response.data.user });
                         this.$router.push('/');
                     }
                 })  
