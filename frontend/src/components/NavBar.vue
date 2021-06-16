@@ -16,7 +16,7 @@
             </button>
           </div>
 
-          <div v-if="navListe" class="navbar-nav p-2 py-auto">
+          <div v-if="navLittleListe || !navLargeListe" class="navbar-nav p-2 py-auto">
             <p class="text-light my-2">{{ $store.state.user.email }}</p>
             <router-link class="nav-link" to="/">Accueil</router-link>
             <router-link class="nav-link" to="/user">Profil</router-link>
@@ -24,7 +24,7 @@
           </div>
         </div>
 
-        <div id="navbarContent" class="collapse navbar-collapse justify-content-between">
+        <div v-if="navLargeListe" id="navbarContent" class="collapse navbar-collapse justify-content-between">
           <div class="d-flex"> 
             <ul class="navbar-nav">
               <li class="nav-item">
@@ -53,7 +53,8 @@ export default {
   name: 'NavBar',
   data() {
     return {
-      navListe: false
+      navLargeListe: true,
+      navLittleListe: true
     }
   },
   methods: {

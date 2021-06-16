@@ -6,7 +6,7 @@ module.exports = {
     const token = authorization.split(' ')[1];
     if(token != null) {
       try {
-        const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         if(decodedToken != null)
           userId = decodedToken.userId;
       } catch(error) { }

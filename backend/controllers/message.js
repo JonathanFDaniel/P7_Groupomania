@@ -1,5 +1,5 @@
 const auth = require('../middleware/auth');
-var fs = require('fs');
+const fs = require('fs');
 
 const db = require("../models");
 const messages = db.message
@@ -87,6 +87,7 @@ exports.getMessageById = (req, res) => {
 };
 
 exports.deleteMessage = (req, res) => {
+  console.log(req.body)
 
   const headerAuth  = req.headers['authorization'];
   const userId = auth.getUserId(headerAuth);

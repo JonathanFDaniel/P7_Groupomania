@@ -10,6 +10,8 @@ const PASSWORD_REGEX  = /^(?=.*\d).{4,8}$/;
 
 exports.signup = (req, res) => {
 
+  console.log(req.body);
+
     const user = {
         firstname: req.body.firstname,
         lastname: req.body.lastname,
@@ -96,7 +98,7 @@ exports.signin = (req, res) => {
         },
         token: jwt.sign(
           { userId: user.id },
-          'RANDOM_TOKEN_SECRET',
+          process.env.JWT_SECRET,
           { expiresIn: '24h'} 
         )
       });
@@ -106,15 +108,6 @@ exports.signin = (req, res) => {
       res.status(500).send({ message: error.message });
     });
 };
-
-/* exports.getUsers = (req, res) => {
-  
-  users.findAll()
-    .then(data => {res.send(data);
-    })
-    .catch(error => {res.status(500).send({message:error.message || "Get error."});
-    });
-}; */
 
 exports.getUserById = (req, res) => {
 
