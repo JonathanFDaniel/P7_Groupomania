@@ -52,9 +52,10 @@
 
 <script>
 
-import axios from 'axios';
+import API from '@/axios';
 
-const API_URL = 'http://localhost:3000/api/auth/';
+
+
 
 export default {
   name: 'Signin',
@@ -70,15 +71,20 @@ export default {
       postLogin() {
         this.$validator.validateAll().then(isValid => {
             if (isValid) {
-                axios.post(API_URL + 'signin', {
+                API.post('auth/signin', {
                     email: this.email,
                     password: this.password
                 })  
                 .then(response => {
                     if (response.data.token) {
+                        console.log(response.data);
                         localStorage.setItem('user', JSON.stringify(response.data));
                         this.$store.dispatch("user/setUser", { payload: response.data.user });
+            
                         this.$router.push('/');
+                    } else {
+                        //redirection
+                          this.$router.push('/login');
                     }
                 })  
                 .catch(error => {

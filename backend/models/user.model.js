@@ -1,3 +1,4 @@
+
 module.exports = (sequelize, Sequelize) => {
     const User = sequelize.define("users", {
         firstname: {
@@ -16,7 +17,12 @@ module.exports = (sequelize, Sequelize) => {
         password: {
             type: Sequelize.STRING,
             allowNull: false
-        }
+        },
+   /*      isAdmin: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
+        } */
     });
   
     return User;

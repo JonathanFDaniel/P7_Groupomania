@@ -58,10 +58,10 @@
 
                     <div class="py-0">
                         <p>
-                            <button type="button"  class="btn btn-outline-primary btn-sm py-0" @click="like(post)" v-bind:class="{ active: isActive}">
+                            <button type="button"  class="btn btn-outline-primary btn-sm py-0" @click="like(post)">
                                 like
                             </button> 
-                            <span v-if="post.likes !== null"> {{ post.likes }}</span>
+                            <span> {{ post.likes }}</span>
                         </p>   
                     </div>
 
@@ -69,7 +69,7 @@
                         <ul class="list-group">
                             <li class="list-group-item d-flex row" v-for="postComment in post.comment" :key="postComment.comment">
                                 <p class="col-9 my-0">{{ postComment.content }}</p>
-                                <p class="col-2 my-0 font-weight-bold">Lucie</p>
+                                <p class="col-2 my-0 font-weight-bold">{{ postComment.userComment }}</p>
                                 <button type="submit" @click="deleteComment(post, postComment)" class="col-1 pt-0 btn"><span aria-hidden="true">&times;</span></button>                             
                             </li>
                         </ul>               
@@ -86,136 +86,153 @@
 
 <script>
 
-import API from '@/axios';
+    import API from '@/axios';
 
 export default {
-    
-name: 'NewMessage',
-data() {
-    return {
-        message: {
-            title: '',
-            content: '',
-            attachement: '',
-        },
-        comment: '',
-        imageFile: null,
-        posts: [],
-        userValid: false,
-        index: -1,
-        messageId: '',
-        isActive: false
-    }
-},
-
-methods: {
-    
-    showMessage() {
         
-        API.get('message')
-        .then(response => {
-            this.posts = response.data;
-            console.log(response.data);
-        })    
-        .catch(error => { console.log(error); 
-        })
-    },
-
-    createMessage() {
-
-        this.imageFile = document.getElementById('addImage').files[0] 
-
-        const fd = new FormData();
-            fd.append('title', this.message.title)
-            fd.append('content', this.message.content)   
-            fd.append('image', this.imageFile )  
-            for (var value of fd.values()) {
-                console.log(value);
-            } 
-            this.$validator.validateAll().then(isValid => {
-                if (isValid) {
-                    API.post('message/new', fd, {
-                            headers: { "Content-Type": "multipart/form-data" },
-                        }  
-                    )  
-                    .then(response => {
-                        this.message.title = ""
-                        this.message.content = "" 
-                        this.showMessage(); 
-                        console.log(response);
-                    })
-                    .catch(error => {
-                        console.log(error);
-                    }) 
-                }
-            }) 
-    },
-
-    deleteMessage(post) {
-
-        const messageId = post.id;
-         
-        API.delete('message/' + messageId)  
-            .then(response => { 
-                console.log(response);
-                this.showMessage();
-            })
-            .catch(error => {
-                console.log(error);
-            })
-    },
-
-    like(post) {
-
-        const messageId = post.id;
-
-        API.post('like/' + messageId + '/likeMessage')
-            .then(response => {
-            console.log(response);
-            this.showMessage();
-            this.isActive = !this.isActive; 
-            })
-            .catch(messageId => {
-                console.log(messageId);
-            }) 
-
-    },
-
-    addComment(post) {
-
-        const messageId = post.id;
-
-        API.post('comment/' + messageId, {
-            content: this.comment
-        })  
-            .then(response => {
-            console.log(response);
-            this.comment = '';
-            this.showMessage(); 
-            })
-            .catch(messageId => {
-                console.log(messageId);
-            }) 
-    },
-
-    deleteComment(post, postComment) {
-
-        const messageId = post.id;
-        const commentId = postComment.id;
-            
-        API.delete('comment/' + messageId + '/' + commentId)  
-            .then(response => { 
-                console.log(response);
-                this.showMessage();
-            })
-            .catch(error => {
-                console.log(error);
-            }) 
+    name: 'NewMessage',
+    data() {
+        return {
+            message: {
+                title: '',
+                content: '',
+                attachement: '',
+            },
+            comment: '',
+            imageFile: null,
+            posts: [],
+            userValid: false,
+            index: -1,
+            messageId: '',
+            isActive: false
         }
-    }, 
-
+    },
     mounted() {
         this.showMessage();
+    },
+
+    methods: {
+        
+        showMessage() {
+            
+            API.get('message')
+            .then(response => {
+                const responseData = response.data;
+                responseData.forEach(element => {
+                    const elements = element 
+                    const date = element.createdAt.split('T')[0];
+                    const hour = element.createdAt.split('T')[1];
+                    const years = date.split('-')[0];
+                    const months = date.split('-')[1];
+                    const days = date.split('-')[2];
+                    const hours = hour.split(':')[0];
+                    const minutes = hour.split(':')[1];
+                    const dates = {'date' :`publié le ${days}/${months}/${years} à ${hours}h${minutes}`};
+                    //elements.forEach(elementUnique => {
+                    // const ele = elementUnique
+                        //this.elementUnique.push(dates);
+                        //console.log(ele);
+                    //})
+                    //this.elements.push(dates);
+                    console.log(elements, dates)
+                }); 
+                this.posts = response.data;
+            })    
+            .catch(error => { console.log(error); 
+            })
+        },
+
+        createMessage() {
+
+            this.imageFile = document.getElementById('addImage').files[0] 
+
+            const fd = new FormData();
+                fd.append('title', this.message.title)
+                fd.append('content', this.message.content)   
+                fd.append('image', this.imageFile )  
+                for (var value of fd.values()) {
+                    console.log(value);
+                } 
+                this.$validator.validateAll().then(isValid => {
+                    if (isValid) {
+                        API.post('message/new', fd, {
+                                headers: { "Content-Type": "multipart/form-data" },
+                            }  
+                        )  
+                        .then(response => {
+                            this.message.title = ""
+                            this.message.content = "" 
+                            this.showMessage(); 
+                            console.log(response);
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        }) 
+                    }
+                }) 
+        },
+
+        deleteMessage(post) {
+
+            const messageId = post.id;
+            
+            API.delete('message/' + messageId)  
+                .then(response => { 
+                    console.log(response);
+                    this.showMessage();
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        },
+
+        like(post) {
+
+            const messageId = post.id;
+
+            API.post('like/' + messageId + '/likeMessage')
+                .then(response => {
+                console.log(response);
+                this.showMessage();
+                })
+                .catch(messageId => {
+                    console.log(messageId);
+                }) 
+
+        },
+
+        addComment(post) {
+
+        console.log('ok', post.index)
+            const messageId = post.id;
+
+            API.post('comment/' + messageId, {
+                content: this.comment
+            })  
+                .then(response => {
+                console.log(response);
+                this.comment = '';
+                this.showMessage(); 
+                })
+                .catch(messageId => {
+                    console.log(messageId);
+                }) 
+        },
+
+        deleteComment(post, postComment) {
+
+            const messageId = post.id;
+            const commentId = postComment.id;
+                
+            API.delete('comment/' + messageId + '/' + commentId)  
+                .then(response => { 
+                    console.log(response);
+                    this.showMessage();
+                })
+                .catch(error => {
+                    console.log(error);
+                }) 
+            }
+        } 
     }
-}
 </script>

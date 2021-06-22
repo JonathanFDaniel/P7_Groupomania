@@ -17,9 +17,9 @@ exports.postComment = (req, res) => {
 
     if (comment.content == "") {
         return res.status(400).json({message : 'missing parameters' });
-      }
+    }
 
-    users.findOne({ where: {id: userId}})
+    const user= users.findOne({ where: {id: userId}})
 
     .then(user => {
     if (!user) {
@@ -28,6 +28,7 @@ exports.postComment = (req, res) => {
 
     const newComment = {
         content: comment.content,
+        userComment: user.firstname,
         userId: userId,
         messageId: messageId 
       } 

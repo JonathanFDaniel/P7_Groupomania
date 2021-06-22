@@ -9,16 +9,17 @@ const comments = db.comment;
 
 exports.createMessage = (req, res,) => {
 
-  console.log(req.file.filename); 
-
-  const headerAuth  = req.headers['authorization'];
+  const headerAuth = req.headers['authorization'];
   const userId = auth.getUserId(headerAuth);
 
     const message = {
         title: req.body.title,
-        content: req.body.content,
-        attachement: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        content: req.body.content
     };
+
+    if ( req.file && req.file.filename) {
+      message.attachement = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    }
 
     if (message.title == "" || message.content == "") {
       return res.status(400).json({message : 'missing parameters' });
@@ -58,7 +59,7 @@ exports.getAllMessage = (req, res) => {
       attributes: [ 'firstname', 'lastname' ]
     },{
       model: comments, as: "comment",
-      attributes: [ 'id', 'content' ]
+      attributes: [ 'id', 'content', 'userComment' ]
     }],
     order:[
       ["id","DESC"]
@@ -87,14 +88,63 @@ exports.getMessageById = (req, res) => {
 };
 
 exports.deleteMessage = (req, res) => {
-  console.log(req.body)
 
-  const headerAuth  = req.headers['authorization'];
+  const messageId = req.params.messageId;
+  console.log('ok', messageId, 'ok')
+  messages.findOne({where :{ id: messageId }})
+  .then(message => {
+    if(message.attachement) {
+      const filename = message.attachement.split('/images/')[1];
+      console.log('ok', filename, 'ok');
+      fs.unlink(`images/${filename}`, () => {
+        messages.destroy({
+          where: { id: messageId }
+        })
+        .then(num => {
+          if (num == 1) {
+            res.send({
+              message: "Message was deleted successfully!"
+            });
+          } else {
+            res.send({
+              message: `Cannot delete user with id=${id}. Maybe Message was not found!`
+            });
+          }
+        })
+        .catch(err => {
+          res.status(500).send({
+            message: "Could not delete Message" 
+          });
+        }); 
+      });
+    } else {
+      messages.destroy({
+        where: { id: messageId }
+      })
+      .then(num => {
+        if (num == 1) {
+          res.send({
+            message: "Message was deleted successfully!"
+          });
+        } else {
+          res.send({
+            message: `Cannot delete user with id=${id}. Maybe Message was not found!`
+          });
+        }
+      })
+      .catch(err => {
+        res.status(500).send({
+          message: "Could not delete Message" 
+        });
+      }); 
+    }
+  })
+  .catch(error => res.status(500).json({ error }));
+  
+  /* const headerAuth  = req.headers['authorization'];
   const userId = auth.getUserId(headerAuth);
 
   const messageId = req.params.messageId;
-
-  console.log(userId);
 
   messages.destroy({
     where: { id: messageId }
@@ -114,7 +164,7 @@ exports.deleteMessage = (req, res) => {
       res.status(500).send({
         message: "Could not delete Message" 
       });
-    });
+    });  */
 }; 
 
  

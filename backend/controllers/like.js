@@ -10,7 +10,7 @@ exports.postLike = (req, res) => {
 
     const headerAuth = req.headers['authorization'];
     const userId = auth.getUserId(headerAuth);
-    console.log(userId);
+    console.log('postlike', userId);
 
     const messageId = parseInt(req.params.messageId);
 
