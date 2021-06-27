@@ -1,54 +1,51 @@
-const auth = require('../middleware/auth');
 const fs = require('fs');
 
 const db = require("../models");
 const messages = db.message
 const users = db.users;
-const islikes = db.like;
 const comments = db.comment;
 
-exports.createMessage = (req, res,) => {
+exports.createMessage = (req, res) => {
 
-  const headerAuth = req.headers['authorization'];
-  const userId = auth.getUserId(headerAuth);
+  const userId = parseInt(req.params.userId);
 
-    const message = {
-        title: req.body.title,
-        content: req.body.content
-    };
+  const message = {
+      title: req.body.title,
+      content: req.body.content
+  };
 
-    if ( req.file && req.file.filename) {
-      message.attachement = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+  if ( req.file && req.file.filename) {
+    message.attachement = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+  }
+
+  if (message.title == "" || message.content == "") {
+    return res.status(400).json({message : 'missing parameters' });
+  }
+
+  users.findOne({ where: {id: userId}})
+
+  .then(user => {
+    if (!user) {
+      return res.status(404).send({ message: "User Not found." });
     }
 
-    if (message.title == "" || message.content == "") {
-      return res.status(400).json({message : 'missing parameters' });
-    }
+    const newMessage = {
+      title: message.title,
+      content: message.content,
+      attachement: message.attachement,
+      userId: userId 
+    } 
 
-    users.findOne({ where: {id: userId}})
+    messages.create(newMessage)
 
-    .then(user => {
-      if (!user) {
-        return res.status(404).send({ message: "User Not found." });
-      }
-
-      const newMessage = {
-        title: message.title,
-        content: message.content,
-        attachement: message.attachement,
-        userId: userId 
-      } 
-
-      messages.create(newMessage)
-
-      .then(data => {res.send(data);
-      })
-      .catch(error => {res.status(500).send({message:error.message || "requet invalid"});
-      });
+    .then(data => {res.send(data);
     })
-    .catch(error => {
-      res.status(500).send({ message: error.message });
-    }); 
+    .catch(error => {res.status(500).send({message:error.message || "requet invalid"});
+    });
+  })
+  .catch(error => {
+    res.status(500).send({ message: error.message });
+  }); 
 };
 
 exports.getAllMessage = (req, res) => {
@@ -59,7 +56,7 @@ exports.getAllMessage = (req, res) => {
       attributes: [ 'firstname', 'lastname' ]
     },{
       model: comments, as: "comment",
-      attributes: [ 'id', 'content', 'userComment' ]
+      attributes: [ 'id', 'userId', 'content', 'userComment', 'alert']
     }],
     order:[
       ["id","DESC"]
@@ -72,30 +69,16 @@ exports.getAllMessage = (req, res) => {
     });
 };
 
-exports.getMessageById = (req, res) => {
-
-  const id = req.params.id;
-
-  messages.findByPk(id)
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error " + id
-      });
-    });
-};
-
 exports.deleteMessage = (req, res) => {
 
   const messageId = req.params.messageId;
-  console.log('ok', messageId, 'ok')
+
   messages.findOne({where :{ id: messageId }})
   .then(message => {
     if(message.attachement) {
+
       const filename = message.attachement.split('/images/')[1];
-      console.log('ok', filename, 'ok');
+
       fs.unlink(`images/${filename}`, () => {
         messages.destroy({
           where: { id: messageId }
@@ -117,6 +100,7 @@ exports.deleteMessage = (req, res) => {
           });
         }); 
       });
+
     } else {
       messages.destroy({
         where: { id: messageId }
@@ -140,31 +124,6 @@ exports.deleteMessage = (req, res) => {
     }
   })
   .catch(error => res.status(500).json({ error }));
-  
-  /* const headerAuth  = req.headers['authorization'];
-  const userId = auth.getUserId(headerAuth);
-
-  const messageId = req.params.messageId;
-
-  messages.destroy({
-    where: { id: messageId }
-  })
-    .then(num => {
-      if (num == 1) {
-        res.send({
-          message: "Message was deleted successfully!"
-        });
-      } else {
-        res.send({
-          message: `Cannot delete user with id=${id}. Maybe Message was not found!`
-        });
-      }
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Could not delete Message" 
-      });
-    });  */
 }; 
 
  

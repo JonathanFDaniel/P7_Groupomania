@@ -23,6 +23,11 @@ module.exports = (sequelize, Sequelize) => {
         userComment: {
             type: Sequelize.STRING,
             allowNull: false,
+        },
+        alert: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         }
     });
   

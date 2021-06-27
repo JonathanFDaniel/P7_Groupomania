@@ -8,10 +8,7 @@ const messages = db.message;
 
 exports.postLike = (req, res) => {
 
-    const headerAuth = req.headers['authorization'];
-    const userId = auth.getUserId(headerAuth);
-    console.log('postlike', userId);
-
+    const userId = parseInt(req.params.userId);
     const messageId = parseInt(req.params.messageId);
 
     if (messageId == null ||userId == null) {
@@ -55,32 +52,33 @@ exports.postLike = (req, res) => {
                             }); 
 
                         } else {
-
+console.log('likes.destroy', messageFound.likes);
                             likes.destroy({
                                 where: { id: userAlreadyLikedFound.id }
                             })
                             .then(() => {
-                                if (messageFound.likes > 1) {
+                                if (messageFound.likes === 1) {
+                                    messageFound.update({
+                                        likes: null,
+                                    }) 
+                                    .then(() => {
+                                        res.status(200).send({ message: "like was deleted successfully!" }); 
+                                    })
+                                    .catch(error => {
+                                        res.status(500).send({ 'error': "Could not delete Message" });
+                                    });
+        
+                                } else {
                                     messageFound.update({
                                         likes: messageFound.likes -1,
                                     }) 
                                     .then(() => {
-                                        res.status(200).send({ message: "Message was deleted successfully!" }); 
+                                        res.status(200).send({ message: "like was deleted successfully!" }); 
                                     })
                                     .catch(error => {
                                         res.status(500).send({ 'error': 'cannot update message like counter' });
                                     });
                                 }
-                                messageFound.update({
-                                    likes: null,
-                                }) 
-                                .then(() => {
-                                    res.status(200).send({ message: "Message was deleted successfully!" }); 
-                                })
-                                .catch(error => {
-                                    res.status(500).send({ 'error': "Could not delete Message" });
-                                });
-
                             }) 
                             .catch(error => {
                                 res.status(500).send({ 'error': "Could not delete Message" });

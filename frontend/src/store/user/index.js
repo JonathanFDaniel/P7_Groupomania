@@ -10,6 +10,7 @@ export default {
       firstname: "",
       lastname: "",
       email: "",
+      isAdmin: "",
     },
     mutations: {
         SET_STATE(state, userInfo) {
@@ -18,6 +19,7 @@ export default {
               firstname: userInfo.firstname,
               lastname: userInfo.lastname,
               email: userInfo.email,
+              isAdmin: userInfo.isAdmin,
             });
         }
     },
@@ -32,6 +34,7 @@ export default {
               firstname: "",
               lastname: "",
               email: "",
+              isAdmin: "",
             });
         }
     },
@@ -41,6 +44,9 @@ export default {
         },
         getUserMail: state => {
             return state.email;
+        },
+        getIsAdmin: state => {
+            return state.isAdmin;
         }
     }
 };

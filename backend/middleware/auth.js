@@ -1,16 +1,16 @@
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
-module.exports = {
-
-  getUserId: (authorization) => {
-    const token = authorization.split(' ')[1];
-    if(token != null) {
-      try {
-        const decodedToken = jwt.verify(token, 'JWT_SECRET');
-        if(decodedToken != null)
-          userId = decodedToken.userId;
-      } catch(error) { }
+module.exports = (req, res, next) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
+        const userId = decodedToken.userId;
+        if (req.body.userId && req.body.userId !== userId) {
+            throw 'User Id non valable !';
+        } else {
+            next();
+        }
+    } catch (error) {
+        res.status(401).json({ error: 'Unauthenticated request ! '});
     }
-    return userId;
-  }
 }

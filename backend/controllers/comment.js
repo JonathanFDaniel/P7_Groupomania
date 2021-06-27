@@ -1,15 +1,11 @@
-const auth = require('../middleware/auth');
-
 const db = require("../models");
 const comments = db.comment
 const users = db.users
 
 exports.postComment = (req, res) => {
 
-  const headerAuth = req.headers['authorization'];
-  const userId = auth.getUserId(headerAuth);
-
-  const messageId = req.params.messageId;
+  const userId = parseInt(req.params.userId);
+  const messageId = parseInt(req.params.messageId);
  
     const comment = {
         content: req.body.content,
@@ -19,8 +15,7 @@ exports.postComment = (req, res) => {
         return res.status(400).json({message : 'missing parameters' });
     }
 
-    const user= users.findOne({ where: {id: userId}})
-
+    users.findOne({ where: {id: userId}})
     .then(user => {
     if (!user) {
         return res.status(404).send({ message: "User Not found." });
@@ -55,14 +50,12 @@ exports.getAllComment = (req, res) => {
 
 exports.deleteComment = (req, res) => {
 
-  const headerAuth  = req.headers['authorization'];
-  const userId = auth.getUserId(headerAuth);
-
+  const userId = req.params.userId;
   const messageId = req.params.messageId;
   const commentId = req.params.commentId;
   
   comments.destroy({
-    where: { id: commentId, userId: userId, messageId: messageId }
+    where: { id: commentId, messageId: messageId }
   })
   .then(num => {
     if (num == 1) {

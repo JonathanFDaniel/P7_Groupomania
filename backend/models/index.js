@@ -21,20 +21,8 @@ db.sequelize = sequelize;
 
 db.users = require("./user.model.js")(sequelize, Sequelize);
 db.message = require("./message.model.js")(sequelize, Sequelize);
-db.role = require("./role.model.js")(sequelize, Sequelize);
 db.comment = require("./comment.model.js")(sequelize, Sequelize);
 db.like = require("./like.model.js")(sequelize, Sequelize);
-
-db.role.belongsToMany(db.users, {
-  through: "user_roles",
-  foreignKey: "roleId",
-  otherKey: "userId"
-});
-db.users.belongsToMany(db.role, {
-  through: "user_roles",
-  foreignKey: "userId",
-  otherKey: "roleId"
-});
 
 db.users.hasMany(db.message, { as: "message"});
 db.message.belongsTo(db.users, {
@@ -65,7 +53,5 @@ db.like.belongsTo(db.message, {
   foreignKey: 'messageId',
   as: 'message',
 });
-
-db.ROLES = ["user", "admin", "moderator"];
 
 module.exports = db;

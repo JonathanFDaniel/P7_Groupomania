@@ -23,6 +23,11 @@ module.exports = (sequelize, Sequelize) => {
         likes: {
             type: Sequelize.INTEGER,
             allowNull: true
+        },
+        alert: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         }
     });
   

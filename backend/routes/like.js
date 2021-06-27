@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
+const auth = require('../middleware/auth');
+
 const likeController = require('../controllers/like')
 
-router.post('/:messageId/likeMessage', likeController.postLike); 
+router.post('/:userId/:messageId', auth, likeController.postLike); 
 
 module.exports = router;

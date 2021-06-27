@@ -1,24 +1,13 @@
-# frontend
+# frontend P7-Groupomania #
 
-## Project setup
-```
-npm install
-```
+## Project setup ##
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+run `npm install`
 
-### Compiles and minifies for production
-```
-npm run build
-```
+### Compiles and hot-reloads for development ###
 
-### Lints and fixes files
-```
-npm run lint
-```
+run `npm run serve`
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+#### Compiles and minifies for production ####
+
+run `npm run build`

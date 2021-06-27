@@ -2,16 +2,15 @@
 
   <div class="user">
 
-      <h1>Mon profile</h1>
+      <h1>Mon profil</h1>
       <div class="card p-2">
         <h3>{{ $store.state.user.firstname }} {{ $store.state.user.lastname }}</h3>
         <p><strong>Id utilisateur : </strong>{{ $store.state.user.id }}</p>
         <p><strong>Adresse Email : </strong>{{ $store.state.user.email }}</p>
-        <p><strong>Mot de passe : </strong>{{ $store.state.user.password }}</p>
        
         <div class='d-flex d-flex flex-wrap'>
           <button type="button" @click="goToUpdateProfile()" class="btn btn-outline-secondary btn-sm col-lg-2 col-sm-4 mx-1 mb-1">modifier mon profil</button>
-          <button type="button" @click="deleteUser()" class="btn btn-outline-danger btn-sm col-lg-2 col-sm-4 mx-1 mb-1">supprimer mon profil</button>
+          <button type="button" @click="deleteUser($store.state.user.id)" class="btn btn-outline-danger btn-sm col-lg-2 col-sm-4 mx-1 mb-1">supprimer mon profil</button>
         </div>
       </div>
     </div>
@@ -31,21 +30,10 @@ export default {
   },
 
   methods: {
-
-    showUser() {
-
-      API.get('auth/profile')
-        .then(response => {
-            this.posts = response.data;
-            console.log(response.data);
-        })    
-        .catch(error => { console.log(error); 
-        })
-    },
     
-    deleteUser() { 
+    deleteUser(userId) { 
 
-      API.delete('auth/profile')  
+      API.delete('auth/profile/' + userId)  
         .then(response => { 
             console.log(response);
             localStorage.removeItem('user');
@@ -55,13 +43,11 @@ export default {
             console.log(error);
         })
     },
+
     goToUpdateProfile() {
 				this.$emit("go-to-update-profile");
 		}
+
   },
- 
-  mounted() {
-    this.showUser();
-  }
 }
 </script>

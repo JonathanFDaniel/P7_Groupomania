@@ -36,7 +36,7 @@
                     <div class="alert-danger">{{errors.first('password')}}</div>
             </div>
 
-            <div v-if="noUserMessage" class="alert alert-danger mt-3" role="alert">
+            <div v-if="userNotFound" class="alert alert-danger mt-3" role="alert">
                 {{errorMessage}}
             </div>
     
@@ -64,7 +64,7 @@ export default {
         email: '',
         password: '',
         errorMessage: 'User not found !',
-        noUserMessage: false,
+        userNotFound: false,
     }
   },
   methods: {
@@ -83,13 +83,12 @@ export default {
             
                         this.$router.push('/');
                     } else {
-                        //redirection
                           this.$router.push('/login');
                     }
                 })  
                 .catch(error => {
                     console.log(error);
-                    this.message = true
+                    this.userNotFound = true
                 })
             }
         })        

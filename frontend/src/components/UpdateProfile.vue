@@ -5,7 +5,7 @@
         <h1>Modifier mon profile</h1>
 
         <div class="card p-2">
-            <form name="form" @submit.prevent="updateUser">
+            <form name="form" @submit.prevent="updateUser($store.state.user.id)">
 
                 <div class="form-group mt-3">
                     <label for="firstname">Prénom</label>
@@ -49,20 +49,6 @@
                         <div class="alert-danger">{{errors.first('email')}}</div>
                 </div>
 
-                <div class="form-group mt-3">
-                    <label for="password">Mot de Passe</label>
-                    <input
-                        v-model="user.password"
-                        v-validate="'min:6|max:40'"
-                        type="password"
-                        class="form-control"
-                        id="password"
-                        placeholder="mot de passe"
-                        name="password">
-
-                        <div class="alert-danger">{{errors.first('password')}}</div>
-                </div>
-
                 <div v-if="message" class="alert alert-danger mt-3" role="alert">
                     {{errorMessage}}
                 </div>
@@ -89,8 +75,7 @@ export default {
         user: {
             firstname: '',
             lastname: '',
-            email: '',
-            password: ''
+            email: ''
         },
         errorMessage: 'E-mail address is already registered !',
         message: false
@@ -100,17 +85,16 @@ export default {
     goToShowProfile() {
 		this.$emit("go-to-show-profile");
 	},
-    updateUser() {
+    updateUser(userId) {
         this.$validator.validateAll().then(isValid => {
             if (isValid) {
-                API.put('auth/profile', {
+                API.put('auth/profile/' + userId, {
                     firstname: this.user.firstname,
                     lastname: this.user.lastname,
-                    email: this.user.email,
-                    password: this.user.password
+                    email: this.user.email
                 }) 
                 .then(response => {
-                    console.log(response);
+                    console.log('updateUser', response);
                     this.$emit("go-to-show-profile");
                 })
                 .catch(error => {

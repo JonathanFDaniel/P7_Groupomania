@@ -10,7 +10,7 @@ const PASSWORD_REGEX  = /^(?=.*\d).{4,8}$/;
 
 exports.signup = (req, res) => {
 
-  console.log(req.body);
+  console.log('signup', req.body);
 
     const user = {
         firstname: req.body.firstname,
@@ -89,16 +89,18 @@ exports.signin = (req, res) => {
           message: "Invalid Password!"
         });
       }
+      
       res.status(200).json({
         user: {
           id: user.id,
           firstname: user.firstname,
           lastname: user.lastname,
           email: user.email,
+          isAdmin: user.isAdmin
         },
         token: jwt.sign(
           { userId: user.id },
-          'JWT_SECRET',
+          process.env.JWT_SECRET,
           { expiresIn: '24h'} 
         )
       });
@@ -109,31 +111,19 @@ exports.signin = (req, res) => {
     });
 };
 
-exports.getUserById = (req, res) => {
+exports.getAllUsers = (req, res) => {
 
-  const headerAuth  = req.headers['authorization'];
-  const userId = auth.getUserId(headerAuth);
-
-  if (userId < 0) {
-    return res.status(400).json({ 'error': 'wrong token' });
-  }
-  
-  users.findByPk(userId)
-    .then(data => {
-      res.send(data);
+   users.findAll()
+    .then(data => {res.send(data);
     })
-    .catch(error => {
-      res.status(500).send({
-        message: "Error" + id
-      });
-    });
-}; 
+    .catch(error => {res.status(500).send({message:error.message || "get error."});
+    }); 
+};
+
  
 exports.modifyUser = (req, res) => {
 
-  const headerAuth  = req.headers['authorization'];
-  const userId = auth.getUserId(headerAuth);
-
+  const userId = parseInt(req.params.userId);
   const firstname = req.body.firstname;
   const lastname = req.body.lastname;
   const email = req.body.email;
@@ -169,12 +159,9 @@ exports.modifyUser = (req, res) => {
 
 exports.deleteUser = (req, res) => {
 
-  const headerAuth  = req.headers['authorization'];
-  const userId = auth.getUserId(headerAuth);
+  const userId = parseInt(req.params.userId);
 
-  users.destroy({
-    where: { id: userId }
-  })
+  users.destroy({where: { id: userId }})
     .then(num => {
       if (num == 1) {
         res.send({

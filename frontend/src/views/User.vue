@@ -5,7 +5,6 @@
       
       <ShowProfile v-if="behavior.ShowProfile === true" @go-to-update-profile="goToUpdateProfile" />
       <UpdateProfile v-if="behavior.UpdateProfile === true" @go-to-show-profile="goToShowProfile" />
-      <!-- <Footer /> -->
       
     </div>
   </div>
@@ -18,7 +17,6 @@
 import NavBar from '@/components/NavBar.vue'
 import ShowProfile from '@/components/ShowProfile.vue'
 import UpdateProfile from '@/components/UpdateProfile.vue'
-//import Footer from '@/components/Footer.vue'
 
 export default {
   name: 'User',
@@ -26,7 +24,6 @@ export default {
     NavBar,
     ShowProfile,
     UpdateProfile,
-    //Footer,
   },
   data() {
     return {

@@ -6,7 +6,7 @@
           <img src="../assets/icon-left-font-monochrome-white.png" width="160" height="auto" alt="Groupomania logo">
         </h1>
         <div class="container-fluid">
-          <p class="text-light my-2">{{ $store.state.user.email }}</p>
+          <p class="text-info my-2">{{ $store.state.user.email }}</p>
           <button
             class="navbar-toggler"
             type="button"
@@ -25,6 +25,9 @@
               </li>
               <li class="nav-item">
                 <router-link class="nav-link text-light" aria-current="page" to="/user">Profil</router-link>
+              </li>
+              <li v-if="$store.state.user.isAdmin == true" class="nav-item">
+                <router-link class="nav-link text-light" aria-current="page" to="/user-list">Liste des utilisateurs</router-link>
               </li>
             </ul>
               <button class="btn btn-link" v-on:click="signOut" type="submit">Se déconnecter</button>

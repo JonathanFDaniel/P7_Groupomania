@@ -62,7 +62,7 @@
                     <div class="alert-danger">{{errors.first('password')}}</div>
             </div>
 
-            <div v-if="message" class="alert alert-danger mt-3" role="alert">
+            <div v-if="emailAlreadyRegistered" class="alert alert-danger mt-3" role="alert">
                 {{errorMessage}}
             </div>
 
@@ -92,7 +92,7 @@ export default {
             password: ''
         },
         errorMessage: 'E-mail address is already registered !',
-        message: false
+        emailAlreadyRegistered: false
     }
   },
   methods: {
@@ -111,7 +111,7 @@ export default {
                 })
                 .catch(error => {
                     console.log(error);
-                    this.message = true
+                    this.emailAlreadyRegistered = true
                 }) 
             }
         })
