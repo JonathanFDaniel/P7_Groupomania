@@ -18,7 +18,7 @@ app.use (express.json ());
 
 const db = require("./models");
 
-//db.sequelize.sync();
+db.sequelize.sync();
 
 /* db.sequelize.sync({ force: true })
 .then(() => {

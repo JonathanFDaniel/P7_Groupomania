@@ -57,7 +57,7 @@
                     <button type="submit" class="btn btn-outline-secondary btn-sm col-lg-3 col-sm-4 mx-1 mb-1">Valider les modifications</button>
                     <button type="button" @click="goToShowProfile()" class="btn btn-outline-danger btn-sm col-lg-2 col-sm-4 mx-1 mb-1">Annuler</button>
                 </div>
-
+                
             </form>
 
         </div>
@@ -93,9 +93,10 @@ export default {
                     lastname: this.user.lastname,
                     email: this.user.email
                 }) 
-                .then(response => {
-                    console.log('updateUser', response);
-                    this.$emit("go-to-show-profile");
+                .then(() => {
+                    localStorage.removeItem("user");
+                    this.$store.dispatch("user/setEmptyUser");
+                    this.$router.push("/signin");
                 })
                 .catch(error => {
                     console.log(error);

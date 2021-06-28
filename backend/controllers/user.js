@@ -35,9 +35,9 @@ exports.signup = (req, res) => {
       return res.status(400).json({ message : 'Email is not valid' });
     }
 
-/*     if (!PASSWORD_REGEX.test(user.password)) {
+    if (!PASSWORD_REGEX.test(user.password)) {
       return res.status(400).json({ 'error': 'password invalid (must length 4 - 8 and include 1 number at least)' });
-    } */
+    } 
 
   users.findOne({ where: {email: user.email}})
     
@@ -127,10 +127,10 @@ exports.modifyUser = (req, res) => {
   const firstname = req.body.firstname;
   const lastname = req.body.lastname;
   const email = req.body.email;
-  //const hashPassword = bcrypt.hashSync(req.body.password, 10);
+  const hashPassword = bcrypt.hashSync(req.body.password, 10);
 
   users.findOne({
-    atributes: ['id', 'firstname' , 'lastname', 'email'/* , 'password' */ ],
+    atributes: ['id', 'firstname' , 'lastname', 'email', 'password'  ],
     where: {id: userId}
     })
     .then((userFound) => {
@@ -141,7 +141,7 @@ exports.modifyUser = (req, res) => {
           firstname: (firstname ? firstname : userFound.firstname),
           lastname: (lastname ? lastname : userFound.lastname),
           email: (email ? email : userFound.email),
-          //password: (password ? hashPassword : userFound.password)
+          password: (password ? hashPassword : userFound.password)
         })
         .then(() =>  {
           res.send({ message: "User was updated successfully." }); 

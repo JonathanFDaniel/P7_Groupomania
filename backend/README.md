@@ -11,7 +11,7 @@ The server should run on `localhost` with default port `3000`. If the
 server runs on another port for any reason, this is printed to the
 console when the server starts, e.g. `Listening on port 3001`.
 
-Create a .env file at the root of the project
+Create a .env file at the root of the project.
 Add the following lines to your .env file :
 
     JWT_SECRET=<your secret message>
@@ -21,9 +21,10 @@ Add the following lines to your .env file :
     DB_USER=<your user name>
     DB_NAME=<your database name>
 
-uncomment line 21 from app.js file : //db.sequelize.sync();
-run `nodemon server`
-comment line 21 from app.js file : //db.sequelize.sync();
+Create your database.
+Uncomment line 21 from app.js file : //db.sequelize.sync();
+Run `nodemon server`.
+Comment line 21 from app.js file : //db.sequelize.sync();
 
 #### run and reload the server ####
 
